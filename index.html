@@ -9,45 +9,40 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Narrow:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
 <!-- ═══════════════════════════════════════════════════════════
-     FIREBASE SDK — Replace config below with your own
+     FIREBASE SDK — No Storage (using base64 for avatars)
 ═══════════════════════════════════════════════════════════ -->
 <script type="module">
-  // ── PASTE YOUR FIREBASE CONFIG HERE ─────────────────────────
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, query, orderBy, limit, where, onSnapshot, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
   const firebaseConfig = {
-  apiKey: "AIzaSyB6AmnCE3atgWuVuI1hIyaKPgLy7zDp9l0",
-  authDomain: "syria-3a18e.firebaseapp.com",
-  projectId: "syria-3a18e",
-  storageBucket: "syria-3a18e.firebasestorage.app",
-  messagingSenderId: "18234582756",
-  appId: "1:18234582756:web:5254daeb6bbea57d52aef1"
-};
+    apiKey: "AIzaSyB6AmnCE3atgWuVuI1hIyaKPgLy7zDp9l0",
+    authDomain: "syria-3a18e.firebaseapp.com",
+    projectId: "syria-3a18e",
+    storageBucket: "syria-3a18e.firebasestorage.app",
+    messagingSenderId: "18234582756",
+    appId: "1:18234582756:web:5254daeb6bbea57d52aef1"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  const storage = getStorage(app);
   const googleProvider = new GoogleAuthProvider();
 
   // ── EXPOSE TO GLOBAL SCOPE ───────────────────────────────────
   window.FB = {
-    auth, db, storage, googleProvider,
+    auth, db, googleProvider,
     GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword,
     signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile,
     collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc,
     query, orderBy, limit, where, onSnapshot, serverTimestamp, increment,
-    ref, uploadBytes, getDownloadURL
   };
 
   // ── AUTH STATE LISTENER ──────────────────────────────────────
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       window.currentUser = user;
-      // Fetch extended profile from Firestore
       try {
         const snap = await getDoc(doc(db, "users", user.uid));
         if (snap.exists()) window.currentUserProfile = snap.data();
@@ -91,9 +86,6 @@
   --mobile-nav-bg:  rgba(10,10,11,0.95);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   DESIGN TOKENS — LIGHT
-═══════════════════════════════════════════════════════════ */
 html.light {
   --bg:           #f5f5f7;
   --bg2:          #ffffff;
@@ -114,7 +106,6 @@ html.light {
   --mobile-nav-bg:  rgba(255,255,255,0.97);
 }
 
-/* ─── Theme toggle button ─────────────────────────────── */
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -157,9 +148,7 @@ html.light {
 .theme-track.on::after { transform: translateX(15px); }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { font-size: 15px; scroll-behavior: smooth; }
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -169,20 +158,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-/* ═══════════════════════════════════════════════════════════
-   LAYOUT
-═══════════════════════════════════════════════════════════ */
-.app-shell {
-  display: flex;
-  min-height: 100dvh;
-}
+.app-shell { display: flex; min-height: 100dvh; }
 
-/* Sidebar */
 .sidebar {
   width: var(--sidebar-w);
   background: var(--bg2);
@@ -219,35 +200,11 @@ body {
   font-family: var(--font-en);
 }
 
-.logo-text {
-  font-family: var(--font-en);
-  font-weight: 800;
-  font-size: 15px;
-  line-height: 1.2;
-  color: var(--text);
-}
+.logo-text { font-family: var(--font-en); font-weight: 800; font-size: 15px; line-height: 1.2; color: var(--text); }
+.logo-sub { font-size: 9px; font-weight: 400; color: var(--text3); letter-spacing: 0.05em; font-family: var(--font-ar); }
 
-.logo-sub {
-  font-size: 9px;
-  font-weight: 400;
-  color: var(--text3);
-  letter-spacing: 0.05em;
-  font-family: var(--font-ar);
-}
-
-.nav-section {
-  margin-top: 8px;
-  flex: 1;
-}
-
-.nav-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--text3);
-  padding: 16px 10px 6px;
-  text-transform: uppercase;
-}
+.nav-section { margin-top: 8px; flex: 1; }
+.nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: var(--text3); padding: 16px 10px 6px; text-transform: uppercase; }
 
 .nav-item {
   display: flex;
@@ -264,42 +221,12 @@ body {
   text-decoration: none;
   user-select: none;
 }
-
-.nav-item:hover {
-  background: var(--surface);
-  color: var(--text);
-}
-
-.nav-item.active {
-  background: var(--accent-glow);
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.nav-item .nav-icon {
-  width: 20px; height: 20px;
-  flex-shrink: 0;
-  opacity: 0.8;
-}
-
+.nav-item:hover { background: var(--surface); color: var(--text); }
+.nav-item.active { background: var(--accent-glow); color: var(--accent); font-weight: 600; }
+.nav-item .nav-icon { width: 20px; height: 20px; flex-shrink: 0; opacity: 0.8; }
 .nav-item.active .nav-icon { opacity: 1; }
 
-.nav-badge {
-  margin-left: auto;
-  background: var(--accent);
-  color: #000;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 20px;
-  min-width: 20px;
-  text-align: center;
-}
-
-.sidebar-cta {
-  margin-top: 16px;
-  padding: 0 4px;
-}
+.sidebar-cta { margin-top: 16px; padding: 0 4px; }
 
 .btn-post-sidebar {
   width: 100%;
@@ -316,12 +243,7 @@ body {
   display: flex; align-items: center; justify-content: center;
   gap: 8px;
 }
-
-.btn-post-sidebar:hover {
-  background: var(--accent2);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--accent-glow);
-}
+.btn-post-sidebar:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
 
 .sidebar-user {
   margin-top: 16px;
@@ -333,30 +255,14 @@ body {
   cursor: pointer;
   transition: background var(--transition);
 }
-
 .sidebar-user:hover { background: var(--surface); }
-
-.sidebar-avatar {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: var(--surface2);
-  flex-shrink: 0;
-}
-
+.sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--surface2); flex-shrink: 0; }
 .sidebar-user-info { flex: 1; min-width: 0; }
 .sidebar-user-name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sidebar-user-handle { font-size: 11px; color: var(--text3); }
 
-/* Main content */
-.main-content {
-  flex: 1;
-  margin-left: var(--sidebar-w);
-  min-height: 100dvh;
-  max-width: 720px;
-}
+.main-content { flex: 1; margin-left: var(--sidebar-w); min-height: 100dvh; max-width: 720px; }
 
-/* Right panel */
 .right-panel {
   width: 300px;
   flex-shrink: 0;
@@ -368,14 +274,9 @@ body {
   display: block;
 }
 
-/* Page */
-.page {
-  display: none;
-  min-height: 100dvh;
-}
+.page { display: none; min-height: 100dvh; }
 .page.active { display: block; }
 
-/* Page header */
 .page-header {
   position: sticky;
   top: 0;
@@ -389,19 +290,9 @@ body {
   align-items: center;
   gap: 12px;
 }
+.page-title { font-family: var(--font-en); font-weight: 800; font-size: 17px; }
 
-.page-title {
-  font-family: var(--font-en);
-  font-weight: 800;
-  font-size: 17px;
-}
-
-/* Tabs */
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border);
-}
-
+.tabs { display: flex; border-bottom: 1px solid var(--border); }
 .tab {
   flex: 1;
   padding: 14px;
@@ -414,78 +305,33 @@ body {
   position: relative;
   border-bottom: 2px solid transparent;
 }
-
 .tab:hover { color: var(--text); background: var(--surface); }
+.tab.active { color: var(--text); font-weight: 700; border-bottom-color: var(--accent); }
 
-.tab.active {
-  color: var(--text);
-  font-weight: 700;
-  border-bottom-color: var(--accent);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   POSTS / CARDS
-═══════════════════════════════════════════════════════════ */
+/* ═══ POSTS / CARDS ═══ */
 .post-card {
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
   transition: background var(--transition);
   cursor: pointer;
 }
-
 .post-card:hover { background: var(--bg2); }
 
-.post-card-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.post-avatar {
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: var(--surface2);
-  flex-shrink: 0;
-  font-size: 0;
-}
-
+.post-card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.post-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; background: var(--surface2); flex-shrink: 0; }
 .post-avatar-placeholder {
-  width: 42px; height: 42px;
-  border-radius: 50%;
+  width: 42px; height: 42px; border-radius: 50%;
   background: linear-gradient(135deg, var(--surface2), var(--border2));
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--accent);
+  font-weight: 700; font-size: 16px; color: var(--accent);
 }
-
 .post-meta { flex: 1; min-width: 0; }
-
-.post-author-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.post-author-name {
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--text);
-}
-
-.post-handle {
-  font-size: 13px;
-  color: var(--text3);
-}
-
+.post-author-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.post-author-name { font-weight: 700; font-size: 14px; color: var(--text); }
+.post-handle { font-size: 13px; color: var(--text3); }
 .post-dot { color: var(--text3); font-size: 12px; }
-
 .post-time { font-size: 12px; color: var(--text3); }
-
 .post-community-badge {
   font-size: 11px;
   background: var(--accent-glow);
@@ -496,61 +342,17 @@ body {
   border: 1px solid rgba(0,200,150,0.2);
   white-space: nowrap;
 }
-
-.post-title {
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1.3;
-  margin-bottom: 6px;
-  color: var(--text);
-}
-
-.post-body {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text2);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.post-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.tag {
-  font-size: 12px;
-  color: var(--accent);
-  font-weight: 500;
-  cursor: pointer;
-}
-
+.post-title { font-weight: 700; font-size: 16px; line-height: 1.3; margin-bottom: 6px; color: var(--text); }
+.post-body { font-size: 14px; line-height: 1.6; color: var(--text2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.post-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tag { font-size: 12px; color: var(--accent); font-weight: 500; cursor: pointer; }
 .tag:hover { text-decoration: underline; }
 
-.post-images {
-  margin-top: 12px;
-  display: grid;
-  gap: 4px;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-}
-
+.post-images { margin-top: 12px; display: grid; gap: 4px; border-radius: var(--radius-sm); overflow: hidden; }
 .post-images.single { grid-template-columns: 1fr; }
 .post-images.double { grid-template-columns: 1fr 1fr; }
 .post-images.triple { grid-template-columns: 1fr 1fr; }
-
-.post-img {
-  width: 100%;
-  aspect-ratio: 16/9;
-  object-fit: cover;
-  background: var(--surface2);
-}
-
-.post-img.tall { aspect-ratio: 4/3; }
+.post-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--surface2); }
 
 .post-link-preview {
   margin-top: 12px;
@@ -565,21 +367,10 @@ body {
   text-decoration: none;
   transition: background var(--transition);
 }
-
 .post-link-preview:hover { background: var(--surface); }
+.link-icon { width: 20px; height: 20px; flex-shrink: 0; color: var(--text3); }
 
-.link-icon {
-  width: 20px; height: 20px;
-  flex-shrink: 0;
-  color: var(--text3);
-}
-
-.post-actions {
-  display: flex;
-  gap: 4px;
-  margin-top: 12px;
-}
-
+.post-actions { display: flex; gap: 4px; margin-top: 12px; }
 .action-btn {
   display: flex;
   align-items: center;
@@ -594,15 +385,12 @@ body {
   cursor: pointer;
   transition: all var(--transition);
 }
-
 .action-btn:hover { background: var(--surface); }
 .action-btn.liked { color: var(--red); }
 .action-btn.liked:hover { background: rgba(255,75,75,0.1); }
 .action-btn.bookmarked { color: var(--gold); }
-
 .action-btn svg { width: 17px; height: 17px; }
 
-/* Trending tag */
 .trending-badge {
   display: inline-flex;
   align-items: center;
@@ -616,46 +404,16 @@ body {
   border-radius: 20px;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   WRITE POST PAGE
-═══════════════════════════════════════════════════════════ */
-.write-container {
-  padding: 20px;
-  max-width: 680px;
-}
-
-.write-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.write-header {
-  padding: 20px 24px 0;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
+/* ═══ WRITE POST ═══ */
+.write-container { padding: 20px; max-width: 680px; }
+.write-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.write-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
 .write-header-text { flex: 1; }
 .write-header-title { font-size: 18px; font-weight: 800; }
 .write-header-sub { font-size: 13px; color: var(--text3); margin-top: 2px; }
-
 .write-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
-
 .form-group { display: flex; flex-direction: column; gap: 6px; }
-
-.form-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text3);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
+.form-label { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; }
 .form-input, .form-textarea, .form-select {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -668,18 +426,8 @@ body {
   outline: none;
   width: 100%;
 }
-
-.form-input:focus, .form-textarea:focus, .form-select:focus {
-  border-color: var(--accent);
-  background: var(--bg3);
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.6;
-}
-
+.form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--accent); background: var(--bg3); }
+.form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
 .form-select {
   appearance: none;
   cursor: pointer;
@@ -690,1191 +438,262 @@ body {
 }
 
 .tags-input-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  cursor: text;
-  transition: border-color var(--transition);
+  display: flex; flex-wrap: wrap; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 10px;
+  cursor: text; transition: border-color var(--transition);
 }
-
 .tags-input-wrap:focus-within { border-color: var(--accent); }
-
 .tag-chip {
-  background: var(--accent-glow);
-  border: 1px solid rgba(0,200,150,0.3);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 3px 8px 3px 10px;
-  border-radius: 20px;
+  background: var(--accent-glow); border: 1px solid rgba(0,200,150,0.3);
+  color: var(--accent); font-size: 12px; font-weight: 600;
+  padding: 3px 8px 3px 10px; border-radius: 20px;
   display: flex; align-items: center; gap: 4px;
 }
-
-.tag-chip-remove {
-  cursor: pointer;
-  opacity: 0.7;
-  font-size: 14px;
-  line-height: 1;
-  transition: opacity var(--transition);
-}
-
+.tag-chip-remove { cursor: pointer; opacity: 0.7; font-size: 14px; line-height: 1; transition: opacity var(--transition); }
 .tag-chip-remove:hover { opacity: 1; }
+.tag-raw-input { border: none; background: transparent; outline: none; color: var(--text); font-family: var(--font-en); font-size: 14px; flex: 1; min-width: 80px; }
 
-.tag-raw-input {
-  border: none;
-  background: transparent;
-  outline: none;
-  color: var(--text);
-  font-family: var(--font-en);
-  font-size: 14px;
-  flex: 1;
-  min-width: 80px;
-}
-
+/* Images — local base64 only (no Storage) */
 .image-drop-zone {
-  border: 2px dashed var(--border2);
-  border-radius: var(--radius-sm);
-  padding: 32px;
-  text-align: center;
-  cursor: pointer;
-  transition: all var(--transition);
-  color: var(--text3);
+  border: 2px dashed var(--border2); border-radius: var(--radius-sm);
+  padding: 32px; text-align: center; cursor: pointer;
+  transition: all var(--transition); color: var(--text3);
 }
-
-.image-drop-zone:hover {
-  border-color: var(--accent);
-  background: var(--accent-glow);
-  color: var(--accent);
-}
-
+.image-drop-zone:hover { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); }
 .image-drop-zone svg { width: 28px; height: 28px; margin-bottom: 8px; }
 .image-drop-zone p { font-size: 13px; margin-top: 6px; }
+.image-drop-note { font-size: 11px; color: var(--text3); margin-top: 6px; }
 
-.image-previews {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.img-preview-wrap {
-  position: relative;
-  width: 80px; height: 80px;
-}
-
-.img-preview {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-}
-
+.image-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.img-preview-wrap { position: relative; width: 80px; height: 80px; }
+.img-preview { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border); }
 .img-preview-remove {
-  position: absolute;
-  top: -6px; right: -6px;
-  width: 20px; height: 20px;
-  background: var(--red);
-  border: 2px solid var(--bg);
-  border-radius: 50%;
+  position: absolute; top: -6px; right: -6px;
+  width: 20px; height: 20px; background: var(--red);
+  border: 2px solid var(--bg); border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 10px;
-  color: #fff;
-  font-weight: 700;
+  cursor: pointer; font-size: 10px; color: #fff; font-weight: 700;
 }
 
-.write-footer {
-  padding: 16px 24px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
+.write-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .char-count { font-size: 12px; color: var(--text3); }
 
 .btn-primary {
-  padding: 11px 28px;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 50px;
-  font-family: var(--font-en);
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all var(--transition);
+  padding: 11px 28px; background: var(--accent); color: #000; border: none;
+  border-radius: 50px; font-family: var(--font-en); font-weight: 700; font-size: 14px;
+  cursor: pointer; transition: all var(--transition);
 }
-
-.btn-primary:hover {
-  background: var(--accent2);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px var(--accent-glow);
-}
-
-.btn-primary:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
-}
-
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 .btn-secondary {
-  padding: 11px 20px;
-  background: transparent;
-  color: var(--text2);
-  border: 1px solid var(--border2);
-  border-radius: 50px;
-  font-family: var(--font-en);
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all var(--transition);
+  padding: 11px 20px; background: transparent; color: var(--text2);
+  border: 1px solid var(--border2); border-radius: 50px;
+  font-family: var(--font-en); font-weight: 600; font-size: 14px;
+  cursor: pointer; transition: all var(--transition);
 }
-
 .btn-secondary:hover { border-color: var(--text2); color: var(--text); }
 
-/* ═══════════════════════════════════════════════════════════
-   COMMUNITIES PAGE
-═══════════════════════════════════════════════════════════ */
-.communities-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 20px;
-}
-
+/* ═══ COMMUNITIES ═══ */
+.communities-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px; }
 .community-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  cursor: pointer;
-  transition: all var(--transition);
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; cursor: pointer; transition: all var(--transition);
 }
-
-.community-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-
-.community-banner {
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  position: relative;
-  overflow: hidden;
-}
-
+.community-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.community-banner { height: 64px; display: flex; align-items: center; justify-content: center; font-size: 28px; position: relative; overflow: hidden; }
 .community-body { padding: 14px; }
-
-.community-name {
-  font-weight: 700;
-  font-size: 14px;
-  margin-bottom: 4px;
-  color: var(--text);
-}
-
-.community-name-ar {
-  font-family: var(--font-ar);
-  font-size: 12px;
-  color: var(--text3);
-  margin-bottom: 8px;
-}
-
-.community-stats {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--text3);
-}
-
-.community-stat strong {
-  color: var(--text2);
-  font-weight: 600;
-}
-
+.community-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; color: var(--text); }
+.community-name-ar { font-family: var(--font-ar); font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+.community-stats { display: flex; gap: 12px; font-size: 12px; color: var(--text3); }
+.community-stat strong { color: var(--text2); font-weight: 600; }
 .community-join-btn {
-  margin-top: 12px;
-  width: 100%;
-  padding: 8px;
-  border-radius: 50px;
-  border: 1px solid var(--border2);
-  background: transparent;
-  color: var(--text2);
-  font-family: var(--font-en);
-  font-weight: 600;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all var(--transition);
+  margin-top: 12px; width: 100%; padding: 8px; border-radius: 50px;
+  border: 1px solid var(--border2); background: transparent; color: var(--text2);
+  font-family: var(--font-en); font-weight: 600; font-size: 12px; cursor: pointer; transition: all var(--transition);
 }
+.community-join-btn:hover, .community-join-btn.joined { background: var(--accent); border-color: var(--accent); color: #000; }
 
-.community-join-btn:hover, .community-join-btn.joined {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   PROFILE PAGE
-═══════════════════════════════════════════════════════════ */
-.profile-cover {
-  height: 180px;
-  background: linear-gradient(135deg, #0d2e1f 0%, #0a1628 50%, #1a0d2e 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.profile-cover-pattern {
-  position: absolute; inset: 0;
-  background-image: 
-    radial-gradient(circle at 20% 50%, rgba(0,200,150,0.08) 0%, transparent 60%),
-    radial-gradient(circle at 80% 20%, rgba(0,200,150,0.05) 0%, transparent 40%);
-}
-
-.profile-cover-edit {
-  position: absolute;
-  top: 12px; right: 12px;
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-sm);
-  padding: 6px 12px;
-  color: var(--text2);
-  font-size: 12px;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: all var(--transition);
-}
-
+/* ═══ PROFILE ═══ */
+.profile-cover { height: 180px; background: linear-gradient(135deg, #0d2e1f 0%, #0a1628 50%, #1a0d2e 100%); position: relative; overflow: hidden; }
+.profile-cover-pattern { position: absolute; inset: 0; background-image: radial-gradient(circle at 20% 50%, rgba(0,200,150,0.08) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(0,200,150,0.05) 0%, transparent 40%); }
+.profile-cover-edit { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 6px 12px; color: var(--text2); font-size: 12px; cursor: pointer; backdrop-filter: blur(8px); transition: all var(--transition); }
 .profile-cover-edit:hover { background: rgba(0,0,0,0.7); color: var(--text); }
-
-.profile-info-section {
-  padding: 0 20px 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.profile-avatar-wrap {
-  margin-top: -44px;
-  margin-bottom: 12px;
-  position: relative;
-  width: fit-content;
-}
-
-.profile-avatar {
-  width: 88px; height: 88px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid var(--bg);
-  background: var(--surface2);
-  display: block;
-}
-
-.avatar-edit-btn {
-  position: absolute;
-  bottom: 2px; right: 2px;
-  width: 26px; height: 26px;
-  background: var(--surface2);
-  border: 2px solid var(--bg);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 12px;
-  transition: background var(--transition);
-}
-
+.profile-info-section { padding: 0 20px 20px; border-bottom: 1px solid var(--border); }
+.profile-avatar-wrap { margin-top: -44px; margin-bottom: 12px; position: relative; width: fit-content; }
+.profile-avatar { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg); background: var(--surface2); display: block; }
+.avatar-edit-btn { position: absolute; bottom: 2px; right: 2px; width: 26px; height: 26px; background: var(--surface2); border: 2px solid var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; transition: background var(--transition); }
 .avatar-edit-btn:hover { background: var(--surface); }
-
-.profile-name {
-  font-weight: 800;
-  font-size: 20px;
-  line-height: 1.2;
-}
-
-.profile-handle {
-  color: var(--text3);
-  font-size: 14px;
-  margin-top: 2px;
-}
-
-.profile-bio {
-  font-size: 14px;
-  color: var(--text2);
-  line-height: 1.5;
-  margin-top: 10px;
-  max-width: 420px;
-}
-
-.profile-meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 10px;
-  font-size: 13px;
-  color: var(--text3);
-}
-
-.profile-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
+.profile-name { font-weight: 800; font-size: 20px; line-height: 1.2; }
+.profile-handle { color: var(--text3); font-size: 14px; margin-top: 2px; }
+.profile-bio { font-size: 14px; color: var(--text2); line-height: 1.5; margin-top: 10px; max-width: 420px; }
+.profile-meta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 13px; color: var(--text3); }
+.profile-meta-item { display: flex; align-items: center; gap: 4px; }
 .profile-meta-item svg { width: 14px; height: 14px; }
-
-.profile-stats {
-  display: flex;
-  gap: 20px;
-  margin-top: 14px;
-  font-size: 14px;
-}
-
+.profile-stats { display: flex; gap: 20px; margin-top: 14px; font-size: 14px; }
 .profile-stat { cursor: pointer; }
 .profile-stat:hover { text-decoration: underline; }
 .profile-stat strong { font-weight: 700; color: var(--text); margin-right: 3px; }
 .profile-stat span { color: var(--text3); }
+.profile-action-row { display: flex; gap: 8px; margin-top: 14px; }
 
-.profile-action-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-/* Auth section inside profile */
-.auth-panel {
-  padding: 32px 24px;
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-.auth-tabs {
-  display: flex;
-  gap: 4px;
-  background: var(--surface);
-  border-radius: var(--radius-sm);
-  padding: 4px;
-  margin-bottom: 24px;
-}
-
-.auth-tab {
-  flex: 1;
-  padding: 9px;
-  text-align: center;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text3);
-  transition: all var(--transition);
-}
-
-.auth-tab.active {
-  background: var(--bg2);
-  color: var(--text);
-  border: 1px solid var(--border2);
-}
-
+/* AUTH */
+.auth-panel { padding: 32px 24px; max-width: 480px; margin: 0 auto; }
+.auth-tabs { display: flex; gap: 4px; background: var(--surface); border-radius: var(--radius-sm); padding: 4px; margin-bottom: 24px; }
+.auth-tab { flex: 1; padding: 9px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text3); transition: all var(--transition); }
+.auth-tab.active { background: var(--bg2); color: var(--text); border: 1px solid var(--border2); }
 .auth-form { display: flex; flex-direction: column; gap: 14px; }
-
-.auth-divider {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text3);
-  font-size: 12px;
-  margin: 4px 0;
-}
-
-.auth-divider::before, .auth-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.btn-google {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-family: var(--font-en);
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all var(--transition);
-  width: 100%;
-}
-
+.auth-divider { display: flex; align-items: center; gap: 10px; color: var(--text3); font-size: 12px; margin: 4px 0; }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.btn-google { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font-en); font-weight: 600; font-size: 14px; cursor: pointer; transition: all var(--transition); width: 100%; }
 .btn-google:hover { background: var(--surface2); border-color: var(--text3); }
-
 .google-icon { width: 18px; height: 18px; }
-
-.auth-error {
-  background: rgba(255,75,75,0.1);
-  border: 1px solid rgba(255,75,75,0.3);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  color: var(--red);
-  font-size: 13px;
-  display: none;
-}
-
+.auth-error { background: rgba(255,75,75,0.1); border: 1px solid rgba(255,75,75,0.3); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--red); font-size: 13px; display: none; }
 .auth-error.show { display: block; }
-
-.auth-logo {
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.auth-logo .logo-mark {
-  margin: 0 auto 10px;
-  width: 48px; height: 48px;
-  font-size: 20px;
-}
-
+.auth-logo { text-align: center; margin-bottom: 28px; }
+.auth-logo .logo-mark { margin: 0 auto 10px; width: 48px; height: 48px; font-size: 20px; }
 .auth-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
 .auth-subtitle { font-size: 14px; color: var(--text3); }
 
-/* Profile edit form */
-.profile-edit-form {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  display: none;
-}
-
+/* Profile edit */
+.profile-edit-form { padding: 24px; display: flex; flex-direction: column; gap: 16px; display: none; }
 .profile-edit-form.show { display: flex; }
 
-/* ═══════════════════════════════════════════════════════════
-   RIGHT PANEL WIDGETS
-═══════════════════════════════════════════════════════════ */
-.widget {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin-bottom: 16px;
-  overflow: hidden;
-}
-
-.widget-title {
-  font-weight: 800;
-  font-size: 16px;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.trending-item {
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: background var(--transition);
-  border-bottom: 1px solid var(--border);
-}
-
+/* ═══ RIGHT PANEL ═══ */
+.widget { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+.widget-title { font-weight: 800; font-size: 16px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.trending-item { padding: 12px 16px; cursor: pointer; transition: background var(--transition); border-bottom: 1px solid var(--border); }
 .trending-item:last-child { border-bottom: none; }
 .trending-item:hover { background: var(--surface); }
-
 .trending-num { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
 .trending-name { font-weight: 700; font-size: 13px; color: var(--text); }
 .trending-posts { font-size: 12px; color: var(--text3); margin-top: 1px; }
-
-.suggest-item {
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid var(--border);
-}
-
+.suggest-item { padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
 .suggest-item:last-child { border-bottom: none; }
-
-.suggest-avatar {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  background: var(--surface2);
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--accent);
-}
-
+.suggest-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--surface2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--accent); }
 .suggest-info { flex: 1; }
 .suggest-name { font-weight: 700; font-size: 13px; }
 .suggest-handle { font-size: 12px; color: var(--text3); }
+.suggest-follow-btn { padding: 6px 14px; border-radius: 50px; border: 1px solid var(--border2); background: transparent; color: var(--text); font-size: 12px; font-weight: 700; cursor: pointer; transition: all var(--transition); font-family: var(--font-en); }
+.suggest-follow-btn:hover { background: var(--accent); border-color: var(--accent); color: #000; }
 
-.suggest-follow-btn {
-  padding: 6px 14px;
-  border-radius: 50px;
-  border: 1px solid var(--border2);
-  background: transparent;
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all var(--transition);
-  font-family: var(--font-en);
-}
-
-.suggest-follow-btn:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   MOBILE NAV
-═══════════════════════════════════════════════════════════ */
-.mobile-nav {
-  display: none;
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--mobile-nav-bg);
-  backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border);
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-  z-index: 200;
-}
-
-.mobile-nav-items {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.mobile-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-  color: var(--text3);
-  font-size: 10px;
-  font-weight: 600;
-  transition: color var(--transition);
-  border: none;
-  background: transparent;
-  font-family: var(--font-en);
-}
-
+/* ═══ MOBILE NAV ═══ */
+.mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--mobile-nav-bg); backdrop-filter: blur(16px); border-top: 1px solid var(--border); padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); z-index: 200; }
+.mobile-nav-items { display: flex; justify-content: space-around; align-items: center; }
+.mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 16px; cursor: pointer; color: var(--text3); font-size: 10px; font-weight: 600; transition: color var(--transition); border: none; background: transparent; font-family: var(--font-en); }
 .mobile-nav-item.active { color: var(--accent); }
 .mobile-nav-item svg { width: 22px; height: 22px; }
+.mobile-fab { display: none; position: fixed; bottom: 72px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); border: none; color: #000; font-size: 24px; font-weight: 700; cursor: pointer; z-index: 200; box-shadow: 0 4px 20px var(--accent-glow); transition: all var(--transition); align-items: center; justify-content: center; }
+.mobile-fab:hover { background: var(--accent2); transform: scale(1.05); }
 
-.mobile-fab {
-  display: none;
-  position: fixed;
-  bottom: 72px;
-  right: 20px;
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: none;
-  color: #000;
-  font-size: 24px;
-  font-weight: 700;
-  cursor: pointer;
-  z-index: 200;
-  box-shadow: 0 4px 20px var(--accent-glow);
-  transition: all var(--transition);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.mobile-fab:hover {
-  background: var(--accent2);
-  transform: scale(1.05);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════════════════════ */
-.toast-container {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-  pointer-events: none;
-}
-
-.toast {
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 50px;
-  padding: 10px 20px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
+/* ═══ TOAST ═══ */
+.toast-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+.toast { background: var(--surface2); border: 1px solid var(--border2); border-radius: 50px; padding: 10px 20px; font-size: 13px; font-weight: 600; color: var(--text); animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; white-space: nowrap; pointer-events: none; }
 .toast.success { border-color: var(--accent); color: var(--accent); }
 .toast.error { border-color: var(--red); color: var(--red); }
+@keyframes toastIn { from { opacity: 0; transform: translateY(12px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-@keyframes toastIn {
-  from { opacity: 0; transform: translateY(12px) scale(0.9); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   MODAL
-═══════════════════════════════════════════════════════════ */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(4px);
-  z-index: 500;
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition);
-}
-
-.modal-overlay.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.modal {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  width: 100%;
-  max-width: 480px;
-  max-height: 90dvh;
-  overflow-y: auto;
-  transform: translateY(20px);
-  transition: transform var(--transition);
-}
-
+/* ═══ MODAL ═══ */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity var(--transition); }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius); width: 100%; max-width: 480px; max-height: 90dvh; overflow-y: auto; transform: translateY(20px); transition: transform var(--transition); }
 .modal-overlay.open .modal { transform: translateY(0); }
-
-.modal-header {
-  padding: 18px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
+.modal-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
 .modal-title { font-weight: 800; font-size: 16px; }
-
-.modal-close {
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  background: var(--surface);
-  border: none;
-  color: var(--text2);
-  cursor: pointer;
-  font-size: 18px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all var(--transition);
-}
-
+.modal-close { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); border: none; color: var(--text2); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all var(--transition); }
 .modal-close:hover { background: var(--surface2); color: var(--text); }
-
 .modal-body { padding: 20px; }
 
-/* ═══════════════════════════════════════════════════════════
-   LOADER
-═══════════════════════════════════════════════════════════ */
-.loader {
-  display: inline-block;
-  width: 20px; height: 20px;
-  border: 2px solid var(--border2);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
+/* ═══ LOADER ═══ */
+.loader { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+.page-loader { display: flex; align-items: center; justify-content: center; height: 200px; }
 
-.page-loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-}
-
-/* Empty state */
-.empty-state {
-  padding: 48px 24px;
-  text-align: center;
-  color: var(--text3);
-}
-
-.empty-state svg {
-  width: 48px; height: 48px;
-  margin-bottom: 12px;
-  opacity: 0.4;
-}
-
+.empty-state { padding: 48px 24px; text-align: center; color: var(--text3); }
+.empty-state svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.4; }
 .empty-state h3 { font-size: 16px; font-weight: 700; color: var(--text2); margin-bottom: 6px; }
 .empty-state p { font-size: 14px; }
 
-/* ═══════════════════════════════════════════════════════════
-   UTILITY
-═══════════════════════════════════════════════════════════ */
-.hidden { display: none !important; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
-
-/* ═══════════════════════════════════════════════════════════
-   SEARCH PAGE
-═══════════════════════════════════════════════════════════ */
-.search-bar-wrap {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: var(--page-header-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  z-index: 50;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: 50px;
-  padding: 10px 16px;
-  transition: border-color var(--transition);
-}
-
-.search-bar:focus-within {
-  border-color: var(--accent);
-  background: var(--bg3);
-}
-
+/* ═══ SEARCH ═══ */
+.search-bar-wrap { padding: 12px 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--page-header-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: 50; }
+.search-bar { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 50px; padding: 10px 16px; transition: border-color var(--transition); }
+.search-bar:focus-within { border-color: var(--accent); background: var(--bg3); }
 .search-bar svg { width: 18px; height: 18px; color: var(--text3); flex-shrink: 0; }
-
-.search-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  color: var(--text);
-  font-family: var(--font-en);
-  font-size: 15px;
-}
-
+.search-input { flex: 1; border: none; background: transparent; outline: none; color: var(--text); font-family: var(--font-en); font-size: 15px; }
 .search-input::placeholder { color: var(--text3); }
-
-.search-clear {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--text3);
-  border: none;
-  color: var(--bg);
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background var(--transition);
-}
-
+.search-clear { width: 22px; height: 22px; border-radius: 50%; background: var(--text3); border: none; color: var(--bg); font-size: 14px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; flex-shrink: 0; transition: background var(--transition); }
 .search-clear.show { display: flex; }
 .search-clear:hover { background: var(--text2); }
-
-.search-filters {
-  display: flex;
-  gap: 6px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
+.search-filters { display: flex; gap: 6px; padding: 10px 16px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
 .search-filters::-webkit-scrollbar { display: none; }
-
-.filter-chip {
-  padding: 6px 14px;
-  border-radius: 50px;
-  border: 1px solid var(--border2);
-  background: transparent;
-  color: var(--text2);
-  font-family: var(--font-en);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all var(--transition);
-  flex-shrink: 0;
-}
-
+.filter-chip { padding: 6px 14px; border-radius: 50px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: var(--font-en); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all var(--transition); flex-shrink: 0; }
 .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
-.filter-chip.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
-}
-
-.search-results-meta {
-  padding: 10px 20px;
-  font-size: 13px;
-  color: var(--text3);
-  border-bottom: 1px solid var(--border);
-}
-
+.filter-chip.active { background: var(--accent); border-color: var(--accent); color: #000; }
+.search-results-meta { padding: 10px 20px; font-size: 13px; color: var(--text3); border-bottom: 1px solid var(--border); }
 .search-results-meta strong { color: var(--accent); }
-
-.search-highlight {
-  background: rgba(0,200,150,0.2);
-  color: var(--accent);
-  border-radius: 2px;
-  padding: 0 1px;
-  font-weight: 600;
-}
-
-html.light .search-highlight {
-  background: rgba(0,158,118,0.15);
-}
-
-.search-empty {
-  padding: 60px 24px;
-  text-align: center;
-}
-
-.search-empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-}
-
-.search-empty h3 {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-
+.search-highlight { background: rgba(0,200,150,0.2); color: var(--accent); border-radius: 2px; padding: 0 1px; font-weight: 600; }
+html.light .search-highlight { background: rgba(0,158,118,0.15); }
+.search-empty { padding: 60px 24px; text-align: center; }
+.search-empty-icon { font-size: 48px; margin-bottom: 12px; }
+.search-empty h3 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
 .search-empty p { font-size: 14px; color: var(--text3); max-width: 300px; margin: 0 auto; }
+.search-suggestions { padding: 16px 20px; }
+.search-suggestions-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.search-suggestion-tag { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; margin: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all var(--transition); }
+.search-suggestion-tag:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
 
-.search-suggestions {
-  padding: 16px 20px;
-}
-
-.search-suggestions-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text3);
-  margin-bottom: 10px;
-}
-
-.search-suggestion-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  margin: 4px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 50px;
-  font-size: 13px;
-  color: var(--text2);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.search-suggestion-tag:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-glow);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   LIGHT MODE OVERRIDES (specific elements)
-═══════════════════════════════════════════════════════════ */
-html.light .profile-cover {
-  background: linear-gradient(135deg, #c8f0e4 0%, #d4e8f8 50%, #e8d4f8 100%);
-}
-
-html.light .modal-overlay {
-  background: rgba(0,0,0,0.4);
-}
-
+/* ═══ LIGHT MODE OVERRIDES ═══ */
+html.light .profile-cover { background: linear-gradient(135deg, #c8f0e4 0%, #d4e8f8 50%, #e8d4f8 100%); }
+html.light .modal-overlay { background: rgba(0,0,0,0.4); }
 html.light .post-card:hover { background: var(--bg3); }
-
 html.light .trending-item:hover { background: var(--surface); }
-
 html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
-/* ═══════════════════════════════════════════════════════════
-   COMMENT SYSTEM
-═══════════════════════════════════════════════════════════ */
 
-/* Inline comment section on post cards */
-.comment-section {
-  border-top: 1px solid var(--border);
-  margin-top: 12px;
-  padding-top: 12px;
-  display: none;
-}
+/* ═══ COMMENTS ═══ */
+.comment-section { border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; display: none; }
 .comment-section.open { display: block; }
-
-.comment-compose {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin-bottom: 14px;
-}
-
-.comment-avatar {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: var(--surface2);
-  flex-shrink: 0;
-  object-fit: cover;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--accent);
-  overflow: hidden;
-}
-
-.comment-input-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.comment-input {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 9px 14px;
-  color: var(--text);
-  font-family: var(--font-en);
-  font-size: 13px;
-  outline: none;
-  resize: none;
-  min-height: 38px;
-  max-height: 120px;
-  overflow-y: auto;
-  line-height: 1.5;
-  transition: border-color var(--transition), min-height var(--transition);
-}
-
-.comment-input:focus {
-  border-color: var(--accent);
-  min-height: 70px;
-  border-radius: 14px;
-}
-
+.comment-compose { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px; }
+.comment-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); flex-shrink: 0; object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--accent); overflow: hidden; }
+.comment-input-wrap { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.comment-input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 9px 14px; color: var(--text); font-family: var(--font-en); font-size: 13px; outline: none; resize: none; min-height: 38px; max-height: 120px; overflow-y: auto; line-height: 1.5; transition: border-color var(--transition), min-height var(--transition); }
+.comment-input:focus { border-color: var(--accent); min-height: 70px; border-radius: 14px; }
 .comment-input::placeholder { color: var(--text3); }
-
-.comment-actions-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  display: none;
-}
-
-.comment-input:focus ~ .comment-actions-row,
-.comment-input-wrap:focus-within .comment-actions-row {
-  display: flex;
-}
-
-.btn-comment-submit {
-  padding: 6px 16px;
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 50px;
-  font-family: var(--font-en);
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all var(--transition);
-}
+.comment-actions-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; display: none; }
+.comment-input:focus ~ .comment-actions-row, .comment-input-wrap:focus-within .comment-actions-row { display: flex; }
+.btn-comment-submit { padding: 6px 16px; background: var(--accent); color: #000; border: none; border-radius: 50px; font-family: var(--font-en); font-weight: 700; font-size: 12px; cursor: pointer; transition: all var(--transition); }
 .btn-comment-submit:hover { background: var(--accent2); }
 .btn-comment-submit:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.btn-comment-cancel {
-  padding: 6px 12px;
-  background: transparent;
-  color: var(--text3);
-  border: none;
-  font-family: var(--font-en);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: color var(--transition);
-  border-radius: 50px;
-}
+.btn-comment-cancel { padding: 6px 12px; background: transparent; color: var(--text3); border: none; font-family: var(--font-en); font-size: 12px; font-weight: 600; cursor: pointer; transition: color var(--transition); border-radius: 50px; }
 .btn-comment-cancel:hover { color: var(--text); background: var(--surface); }
-
-/* Comment list */
 .comment-list { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
-
-.comment-item {
-  display: flex;
-  gap: 9px;
-  align-items: flex-start;
-  animation: fadeSlideIn 0.18s ease forwards;
-}
-
-.comment-bubble {
-  flex: 1;
-  background: var(--surface);
-  border-radius: 14px;
-  padding: 9px 13px;
-  min-width: 0;
-}
-
-.comment-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 3px;
-  flex-wrap: wrap;
-}
-
+.comment-item { display: flex; gap: 9px; align-items: flex-start; animation: fadeSlideIn 0.18s ease forwards; }
+.comment-bubble { flex: 1; background: var(--surface); border-radius: 14px; padding: 9px 13px; min-width: 0; }
+.comment-header { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap; }
 .comment-author { font-weight: 700; font-size: 12px; color: var(--text); }
 .comment-handle { font-size: 11px; color: var(--text3); }
-.comment-time   { font-size: 11px; color: var(--text3); margin-left: auto; }
-
-.comment-text {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text2);
-  word-break: break-word;
-}
-
-.comment-like-btn {
-  background: transparent;
-  border: none;
-  color: var(--text3);
-  font-size: 11px;
-  cursor: pointer;
-  padding: 3px 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-  font-family: var(--font-en);
-  transition: color var(--transition);
-}
+.comment-time { font-size: 11px; color: var(--text3); margin-left: auto; }
+.comment-text { font-size: 13px; line-height: 1.5; color: var(--text2); word-break: break-word; }
+.comment-like-btn { background: transparent; border: none; color: var(--text3); font-size: 11px; cursor: pointer; padding: 3px 0; display: flex; align-items: center; gap: 4px; margin-top: 4px; font-family: var(--font-en); transition: color var(--transition); }
 .comment-like-btn:hover { color: var(--red); }
 .comment-like-btn.liked { color: var(--red); }
 .comment-like-btn svg { width: 13px; height: 13px; }
-
-.comment-load-more {
-  text-align: center;
-  padding: 8px 0 2px;
-  font-size: 12px;
-  color: var(--accent);
-  cursor: pointer;
-  font-weight: 600;
-}
+.comment-load-more { text-align: center; padding: 8px 0 2px; font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; }
 .comment-load-more:hover { text-decoration: underline; }
-
-.comment-count-label {
-  font-size: 12px;
-  color: var(--text3);
-  padding: 2px 0 10px;
-  font-weight: 500;
-}
-
-/* ─── Reply indicator on action button ─── */
+.comment-count-label { font-size: 12px; color: var(--text3); padding: 2px 0 10px; font-weight: 500; }
 .action-btn.commenting { color: var(--accent); background: var(--accent-glow); }
 
-/* ═══════════════════════════════════════════════════════════
-   MOBILE THEME TOGGLE (shown inside mobile top bar)
-═══════════════════════════════════════════════════════════ */
-.mobile-topbar {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 52px;
-  background: var(--mobile-nav-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
-  z-index: 150;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-}
-
-.mobile-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.mobile-logo-mark {
-  width: 28px; height: 28px;
-  background: var(--accent);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 900;
-  font-size: 13px;
-  color: #000;
-  flex-shrink: 0;
-}
-
-.mobile-logo-text {
-  font-weight: 800;
-  font-size: 15px;
-  color: var(--text);
-}
-
-.mobile-topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.mobile-theme-btn {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: transparent;
-  border: 1px solid var(--border2);
-  color: var(--text2);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all var(--transition);
-}
+/* ═══ MOBILE TOPBAR ═══ */
+.mobile-topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: var(--mobile-nav-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); z-index: 150; align-items: center; justify-content: space-between; padding: 0 16px; }
+.mobile-logo { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.mobile-logo-mark { width: 28px; height: 28px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; color: #000; flex-shrink: 0; }
+.mobile-logo-text { font-weight: 800; font-size: 15px; color: var(--text); }
+.mobile-topbar-actions { display: flex; align-items: center; gap: 4px; }
+.mobile-theme-btn { width: 36px; height: 36px; border-radius: 50%; background: transparent; border: 1px solid var(--border2); color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition); }
 .mobile-theme-btn:hover { background: var(--surface); color: var(--text); }
 .mobile-theme-btn svg { width: 18px; height: 18px; }
 
-/* ═══════════════════════════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════════════════════════ */
-@media (max-width: 1100px) {
-  .right-panel { display: none; }
-  .main-content { max-width: none; }
-}
-
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 1100px) { .right-panel { display: none; } .main-content { max-width: none; } }
 @media (max-width: 700px) {
   .sidebar { display: none; }
   .main-content { margin-left: 0; margin-top: 52px; }
@@ -1888,8 +707,6 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
   .write-body { padding: 16px; }
   .write-header { padding: 16px; }
   .write-footer { padding: 12px 16px; }
-
-  /* Search mobile: remove top page-header, let search bar take over */
   #page-search .page-header { display: none; }
   .search-bar-wrap { top: 0; padding: 10px 12px; }
   .search-filters { padding: 8px 12px; gap: 5px; }
@@ -1900,14 +717,10 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
   .search-empty { padding: 40px 16px; }
   .search-empty h3 { font-size: 16px; }
   .search-results-meta { padding: 8px 14px; font-size: 12px; }
-
-  /* Comment section on mobile */
   .comment-section { margin-top: 10px; padding-top: 10px; }
   .comment-bubble { padding: 8px 11px; }
   .comment-input { padding: 8px 12px; font-size: 13px; }
 }
-
-/* Tighten padding for medium screens */
 @media (max-width: 500px) {
   .post-card { padding: 12px 14px; }
   .post-title { font-size: 15px; }
@@ -1917,27 +730,17 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
   .comment-avatar { width: 28px; height: 28px; font-size: 10px; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ANIMATIONS
-═══════════════════════════════════════════════════════════ */
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+.hidden { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
+@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .post-card { animation: fadeSlideIn 0.2s ease forwards; }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════
-     TOAST CONTAINER
-══════════════════════════════════════════════════ -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ══════════════════════════════════════════════════
-     MODAL (reusable)
-══════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal" id="modalBox">
     <div class="modal-header">
@@ -1948,9 +751,6 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     MOBILE TOP BAR (visible only on mobile)
-══════════════════════════════════════════════════ -->
 <div class="mobile-topbar" id="mobileTopbar">
   <div class="mobile-logo" onclick="navigate('feed')">
     <div class="mobile-logo-mark">٨</div>
@@ -1966,9 +766,6 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════
-     APP SHELL
-══════════════════════════════════════════════════ -->
 <div class="app-shell">
 
   <!-- SIDEBAR -->
@@ -2032,7 +829,7 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
   <!-- MAIN -->
   <main class="main-content">
 
-    <!-- ════ FEED PAGE ════ -->
+    <!-- FEED -->
     <div class="page active" id="page-feed">
       <div class="page-header">
         <div class="page-title">Home</div>
@@ -2046,7 +843,7 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
       </div>
     </div>
 
-    <!-- ════ WRITE PAGE ════ -->
+    <!-- WRITE -->
     <div class="page" id="page-write">
       <div class="page-header">
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -2115,7 +912,7 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
             </div>
 
             <div class="form-group">
-              <label class="form-label">Images</label>
+              <label class="form-label">Images <span style="font-size:11px;color:var(--text3);font-weight:400;text-transform:none">(stored locally — Firebase Storage not required)</span></label>
               <div class="image-drop-zone" id="dropZone" onclick="document.getElementById('imgFileInput').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <div style="font-weight:600">Click to add images</div>
@@ -2137,7 +934,7 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
       </div>
     </div>
 
-    <!-- ════ COMMUNITIES PAGE ════ -->
+    <!-- COMMUNITIES -->
     <div class="page" id="page-communities">
       <div class="page-header">
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -2147,14 +944,11 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
         Discover and join communities of Syrians around the world
         <span style="font-family:var(--font-ar);display:block;margin-top:2px">اكتشف مجتمعات السوريين حول العالم</span>
       </div>
-      <div class="communities-grid" id="communitiesGrid">
-        <!-- injected by JS -->
-      </div>
+      <div class="communities-grid" id="communitiesGrid"></div>
     </div>
 
-    <!-- ════ PROFILE PAGE ════ -->
+    <!-- PROFILE -->
     <div class="page" id="page-profile">
-      <!-- Logged-out auth view -->
       <div id="authView">
         <div class="page-header">
           <div class="page-title">Sign In</div>
@@ -2178,9 +972,7 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
               <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
               Continue with Google
             </button>
-
             <div class="auth-divider">or use email</div>
-
             <input class="form-input" id="signinEmail" type="email" placeholder="Email address" />
             <input class="form-input" id="signinPass" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')signInWithEmail()" />
             <button class="btn-primary" onclick="signInWithEmail()">Sign In</button>
@@ -2191,18 +983,17 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
               <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
               Sign Up with Google
             </button>
-
             <div class="auth-divider">or use email</div>
-
+            <input class="form-input" id="signupName" type="text" placeholder="Display name" />
             <input class="form-input" id="signupEmail" type="email" placeholder="Email address" />
             <input class="form-input" id="signupPass" type="password" placeholder="Password (min 6 chars)" />
-            <input class="form-input" id="signupUsername" type="text" placeholder="Choose a username" />
-            <button class="btn-primary" onclick="signUpWithEmail()">Create Account</button>
+            <input class="form-input" id="signupUsername" type="text" placeholder="Choose a username (letters, numbers, _)" />
+            <button class="btn-primary" id="signupBtn" onclick="signUpWithEmail()">Create Account</button>
           </div>
         </div>
       </div>
 
-      <!-- Logged-in profile view -->
+      <!-- Logged-in view -->
       <div id="profileView" class="hidden">
         <div class="profile-cover">
           <div class="profile-cover-pattern"></div>
@@ -2215,11 +1006,9 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
             <div class="avatar-edit-btn" onclick="document.getElementById('avatarFileInput').click()" title="Change photo">📷</div>
             <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="uploadAvatar(event)" />
           </div>
-
           <div class="profile-name" id="profileName">Your Name</div>
           <div class="profile-handle" id="profileHandle">@username</div>
           <div class="profile-bio" id="profileBio"></div>
-
           <div class="profile-meta-row">
             <div class="profile-meta-item" id="profileLocationEl" style="display:none">
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -2230,19 +1019,16 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
               <span id="profileJoined"></span>
             </div>
           </div>
-
           <div class="profile-stats">
             <div class="profile-stat"><strong id="postCountEl">0</strong><span>Posts</span></div>
             <div class="profile-stat"><strong id="followersEl">0</strong><span>Followers</span></div>
             <div class="profile-stat"><strong id="followingEl">0</strong><span>Following</span></div>
           </div>
-
           <div class="profile-action-row">
             <button class="btn-secondary" onclick="signOutUser()">Sign Out</button>
           </div>
         </div>
 
-        <!-- Edit Profile Form -->
         <div class="profile-edit-form" id="profileEditForm">
           <div class="form-group">
             <label class="form-label">Display Name</label>
@@ -2266,7 +1052,6 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
           </div>
         </div>
 
-        <!-- User's posts -->
         <div class="tabs" style="margin-top:0">
           <div class="tab active">Posts</div>
           <div class="tab" style="cursor:default">Replies</div>
@@ -2278,13 +1063,12 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
       </div>
     </div>
 
-    <!-- ════ SEARCH PAGE ════ -->
+    <!-- SEARCH -->
     <div class="page" id="page-search">
       <div class="page-header">
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <div class="page-title">Search</div>
       </div>
-
       <div class="search-bar-wrap">
         <div class="search-bar">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -2292,22 +1076,19 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
           <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
         </div>
       </div>
-
       <div class="search-filters">
-        <button class="filter-chip active" id="filter-all"       onclick="setFilter('all')">All</button>
-        <button class="filter-chip"        id="filter-posts"     onclick="setFilter('posts')">Posts</button>
-        <button class="filter-chip"        id="filter-tags"      onclick="setFilter('tags')">Tags</button>
-        <button class="filter-chip"        id="filter-at_home"   onclick="setFilter('at_home')">🇸🇾 At Home</button>
-        <button class="filter-chip"        id="filter-uk"        onclick="setFilter('uk')">🇬🇧 UK</button>
-        <button class="filter-chip"        id="filter-germany"   onclick="setFilter('germany')">🇩🇪 Germany</button>
-        <button class="filter-chip"        id="filter-turkey"    onclick="setFilter('turkey')">🇹🇷 Turkey</button>
-        <button class="filter-chip"        id="filter-usa"       onclick="setFilter('usa')">🇺🇸 USA</button>
-        <button class="filter-chip"        id="filter-sweden"    onclick="setFilter('sweden')">🇸🇪 Sweden</button>
-        <button class="filter-chip"        id="filter-general"   onclick="setFilter('general')">🌍 General</button>
+        <button class="filter-chip active" id="filter-all" onclick="setFilter('all')">All</button>
+        <button class="filter-chip" id="filter-posts" onclick="setFilter('posts')">Posts</button>
+        <button class="filter-chip" id="filter-tags" onclick="setFilter('tags')">Tags</button>
+        <button class="filter-chip" id="filter-at_home" onclick="setFilter('at_home')">🇸🇾 At Home</button>
+        <button class="filter-chip" id="filter-uk" onclick="setFilter('uk')">🇬🇧 UK</button>
+        <button class="filter-chip" id="filter-germany" onclick="setFilter('germany')">🇩🇪 Germany</button>
+        <button class="filter-chip" id="filter-turkey" onclick="setFilter('turkey')">🇹🇷 Turkey</button>
+        <button class="filter-chip" id="filter-usa" onclick="setFilter('usa')">🇺🇸 USA</button>
+        <button class="filter-chip" id="filter-sweden" onclick="setFilter('sweden')">🇸🇪 Sweden</button>
+        <button class="filter-chip" id="filter-general" onclick="setFilter('general')">🌍 General</button>
       </div>
-
       <div id="searchBody">
-        <!-- Default: suggestions -->
         <div id="searchDefault">
           <div class="search-suggestions">
             <div class="search-suggestions-title">Trending Tags</div>
@@ -2334,8 +1115,6 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
             </div>
           </div>
         </div>
-
-        <!-- Results -->
         <div id="searchResults" class="hidden">
           <div class="search-results-meta" id="searchMeta"></div>
           <div id="searchResultsList"></div>
@@ -2349,11 +1128,8 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
   <aside class="right-panel">
     <div class="widget">
       <div class="widget-title">🔥 Trending Topics</div>
-      <div id="trendingWidget">
-        <div class="page-loader"><div class="loader"></div></div>
-      </div>
+      <div id="trendingWidget"><div class="page-loader"><div class="loader"></div></div></div>
     </div>
-
     <div class="widget">
       <div class="widget-title">🌍 Communities</div>
       <div id="communitiesWidget">
@@ -2363,19 +1139,14 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
         <div class="trending-item" style="text-align:center;padding:10px 16px"><a onclick="navigate('communities')" style="color:var(--accent);font-size:13px;cursor:pointer;font-weight:600">See all communities →</a></div>
       </div>
     </div>
-
     <div style="font-size:11px;color:var(--text3);padding:0 4px;line-height:1.6">
       December 8 Forum · منتدى ٨ ديسمبر<br/>
       A space for Syrians worldwide<br/>
       <span style="color:var(--accent)">Built with ❤ for a free Syria</span>
     </div>
   </aside>
+</div>
 
-</div><!-- end app-shell -->
-
-<!-- ══════════════════════════════════════════════════
-     MOBILE BOTTOM NAV
-══════════════════════════════════════════════════ -->
 <nav class="mobile-nav">
   <div class="mobile-nav-items">
     <button class="mobile-nav-item" id="mnav-search" onclick="navigate('search')">
@@ -2401,127 +1172,49 @@ html.light ::-webkit-scrollbar-thumb { background: var(--border2); }
   </div>
 </nav>
 
-<!-- ══════════════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════════════ -->
 <script>
-/* ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
    COMMUNITIES DATA
-───────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════ */
 const COMMUNITIES = [
-  { id: 'at_home',     flag: '🇸🇾', name: 'Syrians at Home',         nameAr: 'السوريون في الوطن',       color: '#006400', members: 0, posts: 0 },
-  { id: 'uk',          flag: '🇬🇧', name: 'Syrians in the UK',        nameAr: 'السوريون في المملكة',      color: '#012169', members: 0, posts: 0 },
-  { id: 'germany',     flag: '🇩🇪', name: 'Syrians in Germany',       nameAr: 'السوريون في ألمانيا',      color: '#000000', members: 0, posts: 0 },
-  { id: 'turkey',      flag: '🇹🇷', name: 'Syrians in Turkey',        nameAr: 'السوريون في تركيا',        color: '#E30A17', members: 0, posts: 0 },
-  { id: 'usa',         flag: '🇺🇸', name: 'Syrians in the USA',       nameAr: 'السوريون في أمريكا',       color: '#002868', members: 0, posts: 0 },
-  { id: 'sweden',      flag: '🇸🇪', name: 'Syrians in Sweden',        nameAr: 'السوريون في السويد',       color: '#006AA7', members: 0, posts: 0 },
-  { id: 'uae',         flag: '🇦🇪', name: 'Syrians in the UAE',       nameAr: 'السوريون في الإمارات',     color: '#009A44', members: 0, posts: 0 },
-  { id: 'jordan',      flag: '🇯🇴', name: 'Syrians in Jordan',        nameAr: 'السوريون في الأردن',       color: '#007A3D', members: 0, posts: 0 },
-  { id: 'lebanon',     flag: '🇱🇧', name: 'Syrians in Lebanon',       nameAr: 'السوريون في لبنان',        color: '#C8102E', members: 0, posts: 0 },
-  { id: 'france',      flag: '🇫🇷', name: 'Syrians in France',        nameAr: 'السوريون في فرنسا',        color: '#002395', members: 0, posts: 0 },
-  { id: 'netherlands', flag: '🇳🇱', name: 'Syrians in the Netherlands',nameAr: 'السوريون في هولندا',      color: '#AE1C28', members: 0, posts: 0 },
-  { id: 'general',     flag: '🌍', name: 'General / Diaspora',         nameAr: 'عام / المغترب',           color: '#2d5a8e', members: 0, posts: 0 },
+  { id: 'at_home',     flag: '🇸🇾', name: 'Syrians at Home',          nameAr: 'السوريون في الوطن',        color: '#006400' },
+  { id: 'uk',          flag: '🇬🇧', name: 'Syrians in the UK',         nameAr: 'السوريون في المملكة',       color: '#012169' },
+  { id: 'germany',     flag: '🇩🇪', name: 'Syrians in Germany',        nameAr: 'السوريون في ألمانيا',       color: '#000000' },
+  { id: 'turkey',      flag: '🇹🇷', name: 'Syrians in Turkey',         nameAr: 'السوريون في تركيا',         color: '#E30A17' },
+  { id: 'usa',         flag: '🇺🇸', name: 'Syrians in the USA',        nameAr: 'السوريون في أمريكا',        color: '#002868' },
+  { id: 'sweden',      flag: '🇸🇪', name: 'Syrians in Sweden',         nameAr: 'السوريون في السويد',        color: '#006AA7' },
+  { id: 'uae',         flag: '🇦🇪', name: 'Syrians in the UAE',        nameAr: 'السوريون في الإمارات',      color: '#009A44' },
+  { id: 'jordan',      flag: '🇯🇴', name: 'Syrians in Jordan',         nameAr: 'السوريون في الأردن',        color: '#007A3D' },
+  { id: 'lebanon',     flag: '🇱🇧', name: 'Syrians in Lebanon',        nameAr: 'السوريون في لبنان',         color: '#C8102E' },
+  { id: 'france',      flag: '🇫🇷', name: 'Syrians in France',         nameAr: 'السوريون في فرنسا',         color: '#002395' },
+  { id: 'netherlands', flag: '🇳🇱', name: 'Syrians in the Netherlands', nameAr: 'السوريون في هولندا',       color: '#AE1C28' },
+  { id: 'general',     flag: '🌍',  name: 'General / Diaspora',         nameAr: 'عام / المغترب',            color: '#2d5a8e' },
 ];
 
-/* ─────────────────────────────────────────────────────
-   SAMPLE POSTS (shown before Firebase is connected)
-───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   SAMPLE POSTS
+═══════════════════════════════════════════════════════════ */
 const SAMPLE_POSTS = [
-  {
-    id: 'sample1',
-    authorName: 'Ahmad Al-Rashid',
-    authorHandle: 'ahmad_rashid',
-    authorAvatar: '',
-    community: 'at_home',
-    communityName: '🇸🇾 Syrians at Home',
-    title: 'Damascus is rebuilding — here\'s what we\'ve seen',
-    body: 'After December 8, the streets of Damascus have seen a wave of hope and reconstruction. Markets are reopening, old neighborhoods are coming back to life, and people are returning from displacement.',
-    tags: ['Damascus', 'Reconstruction', 'Hope'],
-    likes: 847,
-    comments: 134,
-    shares: 89,
-    createdAt: new Date(Date.now() - 2 * 3600000),
-    trending: true,
-  },
-  {
-    id: 'sample2',
-    authorName: 'Lina Khalil',
-    authorHandle: 'lina_k',
-    authorAvatar: '',
-    community: 'uk',
-    communityName: '🇬🇧 Syrians in the UK',
-    title: 'UK Home Office Syrian visa update — what you need to know',
-    body: 'There have been significant changes to the Syrian family reunion visa process. Here\'s a breakdown of the new requirements and timelines for those applying from the UK.',
-    tags: ['Visa', 'UK', 'Family Reunion'],
-    likes: 612,
-    comments: 78,
-    shares: 203,
-    createdAt: new Date(Date.now() - 5 * 3600000),
-    trending: true,
-  },
-  {
-    id: 'sample3',
-    authorName: 'Omar Tlass',
-    authorHandle: 'o_tlass',
-    authorAvatar: '',
-    community: 'germany',
-    communityName: '🇩🇪 Syrians in Germany',
-    title: 'Hilfe beim Aufenthaltstitel — Community Resources in Berlin',
-    body: 'We\'ve compiled a full list of legal aid organizations, Arabic-speaking lawyers, and community centers in Berlin, Hamburg, and Munich to help with residence permit renewals.',
-    tags: ['Germany', 'Legal', 'Berlin', 'Resources'],
-    likes: 391,
-    comments: 56,
-    shares: 145,
-    createdAt: new Date(Date.now() - 10 * 3600000),
-    trending: false,
-  },
-  {
-    id: 'sample4',
-    authorName: 'Rima Nassar',
-    authorHandle: 'rima_n',
-    authorAvatar: '',
-    community: 'general',
-    communityName: '🌍 General / Diaspora',
-    title: 'A letter to the next generation of Syrians',
-    body: 'To every Syrian child growing up abroad — you carry something precious. Your language, your history, your cuisine, your music. Don\'t let it disappear.',
-    tags: ['Identity', 'Culture', 'Diaspora', 'Heritage'],
-    likes: 1204,
-    comments: 267,
-    shares: 432,
-    createdAt: new Date(Date.now() - 24 * 3600000),
-    trending: true,
-  },
-  {
-    id: 'sample5',
-    authorName: 'Karim Barakat',
-    authorHandle: 'k_barakat',
-    authorAvatar: '',
-    community: 'usa',
-    communityName: '🇺🇸 Syrians in the USA',
-    title: 'Syrian-American business network — Q1 2025 meetup',
-    body: 'Join us in New York for our quarterly meetup connecting Syrian entrepreneurs and professionals across the US. This quarter\'s focus: tech startups and investment opportunities.',
-    tags: ['Business', 'Networking', 'USA', 'NYC'],
-    likes: 189,
-    comments: 42,
-    shares: 67,
-    createdAt: new Date(Date.now() - 36 * 3600000),
-    trending: false,
-  },
+  { id: 'sample1', authorName: 'Ahmad Al-Rashid', authorHandle: 'ahmad_rashid', authorAvatar: '', community: 'at_home', communityName: '🇸🇾 Syrians at Home', title: "Damascus is rebuilding — here's what we've seen", body: 'After December 8, the streets of Damascus have seen a wave of hope and reconstruction. Markets are reopening, old neighborhoods are coming back to life, and people are returning from displacement.', tags: ['Damascus', 'Reconstruction', 'Hope'], likes: 847, comments: 134, shares: 89, createdAt: new Date(Date.now() - 2 * 3600000), trending: true },
+  { id: 'sample2', authorName: 'Lina Khalil', authorHandle: 'lina_k', authorAvatar: '', community: 'uk', communityName: '🇬🇧 Syrians in the UK', title: 'UK Home Office Syrian visa update — what you need to know', body: "There have been significant changes to the Syrian family reunion visa process. Here's a breakdown of the new requirements and timelines for those applying from the UK.", tags: ['Visa', 'UK', 'Family Reunion'], likes: 612, comments: 78, shares: 203, createdAt: new Date(Date.now() - 5 * 3600000), trending: true },
+  { id: 'sample3', authorName: 'Omar Tlass', authorHandle: 'o_tlass', authorAvatar: '', community: 'germany', communityName: '🇩🇪 Syrians in Germany', title: 'Hilfe beim Aufenthaltstitel — Community Resources in Berlin', body: "We've compiled a full list of legal aid organizations, Arabic-speaking lawyers, and community centers in Berlin, Hamburg, and Munich to help with residence permit renewals.", tags: ['Germany', 'Legal', 'Berlin', 'Resources'], likes: 391, comments: 56, shares: 145, createdAt: new Date(Date.now() - 10 * 3600000), trending: false },
+  { id: 'sample4', authorName: 'Rima Nassar', authorHandle: 'rima_n', authorAvatar: '', community: 'general', communityName: '🌍 General / Diaspora', title: 'A letter to the next generation of Syrians', body: "To every Syrian child growing up abroad — you carry something precious. Your language, your history, your cuisine, your music. Don't let it disappear.", tags: ['Identity', 'Culture', 'Diaspora', 'Heritage'], likes: 1204, comments: 267, shares: 432, createdAt: new Date(Date.now() - 24 * 3600000), trending: true },
+  { id: 'sample5', authorName: 'Karim Barakat', authorHandle: 'k_barakat', authorAvatar: '', community: 'usa', communityName: '🇺🇸 Syrians in the USA', title: 'Syrian-American business network — Q1 2025 meetup', body: "Join us in New York for our quarterly meetup connecting Syrian entrepreneurs and professionals across the US. This quarter's focus: tech startups and investment opportunities.", tags: ['Business', 'Networking', 'USA', 'NYC'], likes: 189, comments: 42, shares: 67, createdAt: new Date(Date.now() - 36 * 3600000), trending: false },
 ];
 
-/* ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
    STATE
-───────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════ */
 let currentPage = 'feed';
 let feedTab = 'latest';
 let postTags = [];
-let pendingImages = [];
+let pendingImages = []; // now stores { file, url, dataUrl } — dataUrl for Firestore
 let joinedCommunities = new Set(JSON.parse(localStorage.getItem('joined_communities') || '[]'));
 let likedPosts = new Set(JSON.parse(localStorage.getItem('liked_posts') || '[]'));
 
-/* ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
    APP CONTROLLER
-───────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════ */
 const App = {
   onLogin(user) {
     const profile = window.currentUserProfile || {};
@@ -2529,7 +1222,6 @@ const App = {
     const handle = profile.username || user.email?.split('@')[0] || 'user';
     const avatar = profile.photoURL || user.photoURL || '';
 
-    // Sidebar
     document.getElementById('sidebarName').textContent = name;
     document.getElementById('sidebarHandle').textContent = '@' + handle;
     if (avatar) {
@@ -2538,14 +1230,12 @@ const App = {
       if (mob) mob.src = avatar;
     }
 
-    // Write page
     document.getElementById('writeLoginPrompt').classList.add('hidden');
     document.getElementById('writeForm').classList.remove('hidden');
     document.getElementById('writeUserSub').textContent = 'Writing as @' + handle;
     if (avatar) document.getElementById('writeAvatar').src = avatar;
     document.getElementById('submitPostBtn').disabled = false;
 
-    // Profile page
     document.getElementById('authView').classList.add('hidden');
     document.getElementById('profileView').classList.remove('hidden');
     document.getElementById('profileName').textContent = name;
@@ -2556,16 +1246,14 @@ const App = {
       document.getElementById('profileLocationEl').style.display = 'flex';
     }
     if (avatar) document.getElementById('profileAvatar').src = avatar;
-    document.getElementById('profileJoined').textContent = 'Joined ' + new Date(user.metadata?.creationTime || Date.now()).toLocaleDateString('en-GB', {month:'long', year:'numeric'});
+    document.getElementById('profileJoined').textContent = 'Joined ' + new Date(user.metadata?.creationTime || Date.now()).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
-    // Populate edit fields
     document.getElementById('editName').value = name;
     document.getElementById('editUsername').value = handle;
     document.getElementById('editBio').value = profile.bio || '';
     document.getElementById('editLocation').value = profile.location || '';
 
     loadUserPosts(user.uid);
-    document.getElementById('submitPostBtn').disabled = false;
   },
 
   onLogout() {
@@ -2579,30 +1267,27 @@ const App = {
   }
 };
 
-/* ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
    NAVIGATION
-───────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════ */
 function navigate(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
-
   document.getElementById('page-' + page).classList.add('active');
   const navEl = document.getElementById('nav-' + page);
   if (navEl) navEl.classList.add('active');
   const mnavEl = document.getElementById('mnav-' + page);
   if (mnavEl) mnavEl.classList.add('active');
-
   currentPage = page;
   window.scrollTo(0, 0);
-
   if (page === 'feed') loadFeed();
   if (page === 'communities') loadCommunities();
 }
 
-/* ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
    FEED
-───────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════ */
 function switchFeedTab(tab) {
   feedTab = tab;
   document.getElementById('tab-latest').classList.toggle('active', tab === 'latest');
@@ -2615,85 +1300,62 @@ async function loadFeed() {
   container.innerHTML = '<div class="page-loader"><div class="loader"></div></div>';
 
   if (!window.FB) {
-    // Firebase not connected yet — show sample posts
-    renderPosts(container, feedTab === 'trending'
-      ? SAMPLE_POSTS.filter(p => p.trending)
-      : [...SAMPLE_POSTS].sort((a,b) => b.createdAt - a.createdAt)
-    );
+    renderPosts(container, feedTab === 'trending' ? SAMPLE_POSTS.filter(p => p.trending) : [...SAMPLE_POSTS].sort((a, b) => b.createdAt - a.createdAt));
     return;
   }
 
   try {
-    const { db, collection, query, orderBy, limit, getDocs, where } = window.FB;
-    let q;
-    if (feedTab === 'trending') {
-      q = query(collection(db, 'posts'), orderBy('likes', 'desc'), limit(20));
-    } else {
-      q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(30));
-    }
+    const { db, collection, query, orderBy, limit, getDocs } = window.FB;
+    const q = feedTab === 'trending'
+      ? query(collection(db, 'posts'), orderBy('likes', 'desc'), limit(20))
+      : query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(30));
     const snap = await getDocs(q);
     const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (posts.length === 0) {
-      renderPosts(container, SAMPLE_POSTS);
-      return;
-    }
-    renderPosts(container, posts);
-    loadTrendingWidget(posts);
-  } catch(e) {
+    renderPosts(container, posts.length ? posts : SAMPLE_POSTS);
+    loadTrendingWidget(posts.length ? posts : SAMPLE_POSTS);
+  } catch (e) {
     renderPosts(container, SAMPLE_POSTS);
   }
 }
 
 function renderPosts(container, posts) {
-  // Cache for search
   if (posts.length) window._allLoadedPosts = posts;
   if (!posts.length) {
-    container.innerHTML = `<div class="empty-state">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-      <h3>No posts yet</h3><p>Be the first to share something with the community.</p></div>`;
+    container.innerHTML = `<div class="empty-state"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg><h3>No posts yet</h3><p>Be the first to share something with the community.</p></div>`;
     return;
   }
-
   container.innerHTML = posts.map(post => buildPostCard(post)).join('');
   loadTrendingWidget(posts);
 }
 
 function buildPostCard(post) {
   const liked = likedPosts.has(post.id);
-  const initials = (post.authorName || 'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const initials = (post.authorName || 'A').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   const avatarHtml = post.authorAvatar
     ? `<img class="post-avatar" src="${escHtml(post.authorAvatar)}" alt="" />`
     : `<div class="post-avatar-placeholder">${initials}</div>`;
-
   const timeAgo = formatTime(post.createdAt?.toDate ? post.createdAt.toDate() : new Date(post.createdAt));
   const communityLabel = getCommunityLabel(post.community || post.communityName);
   const isTrending = post.likes >= 100 || post.trending;
-
   const tagsHtml = (post.tags || []).map(t => `<span class="tag">#${escHtml(t)}</span>`).join('');
-
   let imgsHtml = '';
   if (post.images && post.images.length > 0) {
     const cls = post.images.length === 1 ? 'single' : post.images.length === 2 ? 'double' : 'triple';
-    imgsHtml = `<div class="post-images ${cls}">${post.images.map(src=>`<img class="post-img" src="${escHtml(src)}" loading="lazy" />`).join('')}</div>`;
+    imgsHtml = `<div class="post-images ${cls}">${post.images.map(src => `<img class="post-img" src="${escHtml(src)}" loading="lazy" />`).join('')}</div>`;
   }
-
   let linkHtml = '';
   if (post.link) {
     let domain = '';
-    try { domain = new URL(post.link).hostname; } catch(e){}
-    linkHtml = `<a class="post-link-preview" href="${escHtml(post.link)}" target="_blank" rel="noopener">
-      <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-      ${escHtml(domain)} — ${escHtml(post.link.slice(0,60))}
-    </a>`;
+    try { domain = new URL(post.link).hostname; } catch (e) {}
+    linkHtml = `<a class="post-link-preview" href="${escHtml(post.link)}" target="_blank" rel="noopener"><svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>${escHtml(domain)} — ${escHtml(post.link.slice(0, 60))}</a>`;
   }
-
   return `<div class="post-card" id="card-${post.id}" onclick="event.target.closest('.comment-section,.action-btn') || openPost('${post.id}')">
     <div class="post-card-header">
       ${avatarHtml}
       <div class="post-meta">
         <div class="post-author-row">
-          <span class="post-author-name">${escHtml(post.authorName||'Anonymous')}</span>
-          <span class="post-handle">@${escHtml(post.authorHandle||'user')}</span>
+          <span class="post-author-name">${escHtml(post.authorName || 'Anonymous')}</span>
+          <span class="post-handle">@${escHtml(post.authorHandle || 'user')}</span>
           <span class="post-dot">·</span>
           <span class="post-time">${timeAgo}</span>
           ${isTrending ? '<span class="trending-badge">🔥 Trending</span>' : ''}
@@ -2702,22 +1364,22 @@ function buildPostCard(post) {
       </div>
     </div>
     ${post.title ? `<div class="post-title">${escHtml(post.title)}</div>` : ''}
-    <div class="post-body">${escHtml(post.body||'')}</div>
+    <div class="post-body">${escHtml(post.body || '')}</div>
     ${imgsHtml}
     ${linkHtml}
     ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
     <div class="post-actions" onclick="event.stopPropagation()">
-      <button class="action-btn ${liked?'liked':''}" onclick="toggleLike('${post.id}', this, ${post.likes||0})">
-        <svg fill="${liked?'currentColor':'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-        <span class="like-count">${formatNum(post.likes||0)}</span>
+      <button class="action-btn ${liked ? 'liked' : ''}" onclick="toggleLike('${post.id}', this, ${post.likes || 0})">
+        <svg fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        <span class="like-count">${formatNum(post.likes || 0)}</span>
       </button>
       <button class="action-btn" id="comment-btn-${post.id}" onclick="toggleComments('${post.id}', this)">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-        <span class="comment-count-${post.id}">${formatNum(post.comments||0)}</span>
+        <span class="comment-count-${post.id}">${formatNum(post.comments || 0)}</span>
       </button>
       <button class="action-btn" onclick="sharePost('${post.id}')">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-        ${formatNum(post.shares||0)}
+        ${formatNum(post.shares || 0)}
       </button>
       <button class="action-btn" onclick="bookmarkPost('${post.id}', this)" style="margin-left:auto">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
@@ -2744,13 +1406,10 @@ function buildPostCard(post) {
 
 function getCommunityLabel(id) {
   const c = COMMUNITIES.find(c => c.id === id || c.name === id);
-  return c ? `${c.flag} ${c.name}` : id || '';
+  return c ? `${c.flag} ${c.name}` : (id || '');
 }
 
-function openPost(id) {
-  // Future: navigate to post detail view
-  toast('Post detail coming soon!', 'success');
-}
+function openPost(id) { toast('Post detail coming soon!', 'success'); }
 
 function toggleLike(postId, btn, currentLikes) {
   if (likedPosts.has(postId)) {
@@ -2765,23 +1424,15 @@ function toggleLike(postId, btn, currentLikes) {
     btn.querySelector('.like-count').textContent = formatNum(currentLikes + 1);
   }
   localStorage.setItem('liked_posts', JSON.stringify([...likedPosts]));
-
-  // Persist to Firestore if connected
   if (window.FB && window.currentUser) {
     const { db, doc, updateDoc, increment } = window.FB;
-    updateDoc(doc(db, 'posts', postId), {
-      likes: increment(likedPosts.has(postId) ? 1 : -1)
-    }).catch(()=>{});
+    updateDoc(doc(db, 'posts', postId), { likes: increment(likedPosts.has(postId) ? 1 : -1) }).catch(() => {});
   }
 }
 
 function sharePost(id) {
-  if (navigator.share) {
-    navigator.share({ title: 'December 8 Forum', url: location.href + '#post-' + id });
-  } else {
-    navigator.clipboard?.writeText(location.href + '#post-' + id);
-    toast('Link copied!', 'success');
-  }
+  if (navigator.share) { navigator.share({ title: 'December 8 Forum', url: location.href + '#post-' + id }); }
+  else { navigator.clipboard?.writeText(location.href + '#post-' + id); toast('Link copied!', 'success'); }
 }
 
 function bookmarkPost(id, btn) {
@@ -2789,23 +1440,16 @@ function bookmarkPost(id, btn) {
   toast(btn.classList.contains('bookmarked') ? 'Bookmarked!' : 'Removed bookmark', 'success');
 }
 
-/* ─────────────────────────────────────────────────────
-   WRITE POST
-───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   WRITE POST — images as base64 (no Storage needed)
+═══════════════════════════════════════════════════════════ */
 function handleTagInput(e) {
   if (e.key === 'Enter' || e.key === ',') {
     e.preventDefault();
-    const val = e.target.value.trim().replace(/^#/,'');
-    if (val && !postTags.includes(val) && postTags.length < 8) {
-      postTags.push(val);
-      renderTags();
-      e.target.value = '';
-    }
+    const val = e.target.value.trim().replace(/^#/, '');
+    if (val && !postTags.includes(val) && postTags.length < 8) { postTags.push(val); renderTags(); e.target.value = ''; }
   }
-  if (e.key === 'Backspace' && !e.target.value && postTags.length) {
-    postTags.pop();
-    renderTags();
-  }
+  if (e.key === 'Backspace' && !e.target.value && postTags.length) { postTags.pop(); renderTags(); }
 }
 
 function renderTags() {
@@ -2820,51 +1464,53 @@ function renderTags() {
   });
 }
 
-function removeTag(i) {
-  postTags.splice(i, 1);
-  renderTags();
+function removeTag(i) { postTags.splice(i, 1); renderTags(); }
+
+// Convert file to base64 data URL
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
-function handleImgSelect(e) {
-  const files = Array.from(e.target.files);
-  files.slice(0, 4 - pendingImages.length).forEach(f => {
+async function handleImgSelect(e) {
+  const files = Array.from(e.target.files).slice(0, 4 - pendingImages.length);
+  for (const f of files) {
     const url = URL.createObjectURL(f);
-    pendingImages.push({ file: f, url });
-  });
+    const dataUrl = await fileToBase64(f);
+    pendingImages.push({ file: f, url, dataUrl });
+  }
   renderImagePreviews();
   e.target.value = '';
 }
 
 function handleDragOver(e) { e.preventDefault(); }
-function handleDrop(e) {
+async function handleDrop(e) {
   e.preventDefault();
-  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-  files.slice(0, 4 - pendingImages.length).forEach(f => {
-    pendingImages.push({ file: f, url: URL.createObjectURL(f) });
-  });
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).slice(0, 4 - pendingImages.length);
+  for (const f of files) {
+    const url = URL.createObjectURL(f);
+    const dataUrl = await fileToBase64(f);
+    pendingImages.push({ file: f, url, dataUrl });
+  }
   renderImagePreviews();
 }
 
 function renderImagePreviews() {
-  const container = document.getElementById('imagePreviews');
-  container.innerHTML = pendingImages.map((img, i) => `
+  document.getElementById('imagePreviews').innerHTML = pendingImages.map((img, i) => `
     <div class="img-preview-wrap">
       <img class="img-preview" src="${img.url}" />
       <div class="img-preview-remove" onclick="removeImage(${i})">×</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function removeImage(i) {
-  URL.revokeObjectURL(pendingImages[i].url);
-  pendingImages.splice(i, 1);
-  renderImagePreviews();
-}
+function removeImage(i) { URL.revokeObjectURL(pendingImages[i].url); pendingImages.splice(i, 1); renderImagePreviews(); }
 
 function updateCharCount() {
-  const title = document.getElementById('postTitle').value.length;
-  const body = document.getElementById('postBody').value.length;
-  const total = title + body;
+  const total = document.getElementById('postTitle').value.length + document.getElementById('postBody').value.length;
   document.getElementById('charCount').textContent = total + ' / 2000';
   document.getElementById('submitPostBtn').disabled = total === 0 || !window.currentUser;
 }
@@ -2874,47 +1520,34 @@ function clearWriteForm() {
   document.getElementById('postBody').value = '';
   document.getElementById('postLink').value = '';
   document.getElementById('postCommunity').value = '';
-  postTags = [];
-  pendingImages = [];
-  renderTags();
-  renderImagePreviews();
-  updateCharCount();
+  postTags = []; pendingImages = [];
+  renderTags(); renderImagePreviews(); updateCharCount();
 }
 
 async function submitPost() {
   if (!window.currentUser) { navigate('profile'); return; }
-
   const title = document.getElementById('postTitle').value.trim();
   const body = document.getElementById('postBody').value.trim();
   const link = document.getElementById('postLink').value.trim();
   const community = document.getElementById('postCommunity').value;
-
   if (!body && !title) { toast('Please write something first', 'error'); return; }
 
   const btn = document.getElementById('submitPostBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="loader" style="width:16px;height:16px"></span>';
+  btn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px"></span>';
 
   if (!window.FB) {
-    toast('Connect Firebase to post! (demo mode)', 'error');
-    btn.disabled = false;
-    btn.textContent = 'Post';
-    return;
+    toast('Firebase not connected', 'error');
+    btn.disabled = false; btn.textContent = 'Post'; return;
   }
 
   try {
-    const { db, storage, collection, addDoc, serverTimestamp, ref, uploadBytes, getDownloadURL } = window.FB;
+    const { db, collection, addDoc, serverTimestamp } = window.FB;
     const profile = window.currentUserProfile || {};
     const user = window.currentUser;
 
-    // Upload images
-    let imageUrls = [];
-    for (const img of pendingImages) {
-      const imgRef = ref(storage, `posts/${user.uid}/${Date.now()}_${img.file.name}`);
-      const snap = await uploadBytes(imgRef, img.file);
-      const url = await getDownloadURL(snap.ref);
-      imageUrls.push(url);
-    }
+    // Use base64 dataUrls directly — no Storage required
+    const imageUrls = pendingImages.map(img => img.dataUrl);
 
     await addDoc(collection(db, 'posts'), {
       title, body, link, community,
@@ -2932,7 +1565,7 @@ async function submitPost() {
     toast('Post published! 🎉', 'success');
     clearWriteForm();
     navigate('feed');
-  } catch(e) {
+  } catch (e) {
     toast('Error: ' + e.message, 'error');
   }
 
@@ -2940,107 +1573,68 @@ async function submitPost() {
   btn.textContent = 'Post';
 }
 
-/* ─────────────────────────────────────────────────────
-   COMMUNITIES PAGE
-───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   COMMUNITIES
+═══════════════════════════════════════════════════════════ */
 async function loadCommunities() {
   const grid = document.getElementById('communitiesGrid');
-
-  // Load counts from Firestore if available
   let counts = {};
   if (window.FB) {
     try {
-      const { db, collection, getDocs, query, where } = window.FB;
+      const { db, collection, getDocs } = window.FB;
       const snap = await getDocs(collection(db, 'communities'));
       snap.docs.forEach(d => { counts[d.id] = d.data(); });
-    } catch(e) {}
+    } catch (e) {}
   }
-
   grid.innerHTML = COMMUNITIES.map(c => {
     const data = counts[c.id] || {};
-    const members = data.members || c.members || 0;
-    const posts = data.posts || c.posts || 0;
     const joined = joinedCommunities.has(c.id);
-    return `
-      <div class="community-card" onclick="event.target.closest('.community-card') && openCommunity('${c.id}')">
-        <div class="community-banner" style="background:linear-gradient(135deg, ${c.color}22 0%, ${c.color}44 100%)">
-          <span style="font-size:36px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">${c.flag}</span>
-        </div>
-        <div class="community-body">
-          <div class="community-name">${c.name}</div>
-          <div class="community-name-ar">${c.nameAr}</div>
-          <div class="community-stats">
-            <div class="community-stat"><strong>${formatNum(members)}</strong> members</div>
-            <div class="community-stat"><strong>${formatNum(posts)}</strong> posts</div>
-          </div>
-          <button class="community-join-btn ${joined?'joined':''}" onclick="event.stopPropagation(); toggleJoin('${c.id}', this)">
-            ${joined ? '✓ Joined' : '+ Join'}
-          </button>
-        </div>
+    return `<div class="community-card" onclick="event.target.closest('.community-card') && openCommunity('${c.id}')">
+      <div class="community-banner" style="background:linear-gradient(135deg,${c.color}22 0%,${c.color}44 100%)">
+        <span style="font-size:36px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">${c.flag}</span>
       </div>
-    `;
+      <div class="community-body">
+        <div class="community-name">${c.name}</div>
+        <div class="community-name-ar">${c.nameAr}</div>
+        <div class="community-stats">
+          <div class="community-stat"><strong>${formatNum(data.members || 0)}</strong> members</div>
+          <div class="community-stat"><strong>${formatNum(data.posts || 0)}</strong> posts</div>
+        </div>
+        <button class="community-join-btn ${joined ? 'joined' : ''}" onclick="event.stopPropagation();toggleJoin('${c.id}',this)">
+          ${joined ? '✓ Joined' : '+ Join'}
+        </button>
+      </div>
+    </div>`;
   }).join('');
 }
 
 function toggleJoin(id, btn) {
   if (joinedCommunities.has(id)) {
-    joinedCommunities.delete(id);
-    btn.textContent = '+ Join';
-    btn.classList.remove('joined');
-    toast('Left community', 'success');
+    joinedCommunities.delete(id); btn.textContent = '+ Join'; btn.classList.remove('joined'); toast('Left community', 'success');
   } else {
-    joinedCommunities.add(id);
-    btn.textContent = '✓ Joined';
-    btn.classList.add('joined');
-    toast('Joined community! 🎉', 'success');
+    joinedCommunities.add(id); btn.textContent = '✓ Joined'; btn.classList.add('joined'); toast('Joined community! 🎉', 'success');
   }
   localStorage.setItem('joined_communities', JSON.stringify([...joinedCommunities]));
-
-  // Persist to Firestore
-  if (window.FB && window.currentUser) {
-    const { db, doc, setDoc, increment } = window.FB;
-    setDoc(doc(db, 'users', window.currentUser.uid, 'communities', id), {
-      joined: joinedCommunities.has(id)
-    }).catch(()=>{});
-  }
 }
 
-function openCommunity(id) {
-  // Filters feed to community — future: dedicated community page
-  feedTab = 'latest';
-  navigate('feed');
-  toast('Showing ' + getCommunityLabel(id), 'success');
-}
+function openCommunity(id) { navigate('feed'); toast('Showing ' + getCommunityLabel(id), 'success'); }
 
-/* ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
    TRENDING WIDGET
-───────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════ */
 function loadTrendingWidget(posts) {
   const tagCounts = {};
-  posts.forEach(p => (p.tags || []).forEach(t => {
-    tagCounts[t] = (tagCounts[t] || 0) + 1;
-  }));
-
-  const sorted = Object.entries(tagCounts).sort((a,b) => b[1]-a[1]).slice(0, 6);
+  posts.forEach(p => (p.tags || []).forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+  const sorted = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const widget = document.getElementById('trendingWidget');
-
-  if (!sorted.length) {
-    widget.innerHTML = '<div class="trending-item" style="color:var(--text3);font-size:13px">No trending topics yet</div>';
-    return;
-  }
-
-  widget.innerHTML = sorted.map(([tag, count], i) => `
-    <div class="trending-item">
-      <div class="trending-num">#${i+1} · Trending</div>
-      <div class="trending-name">#${escHtml(tag)}</div>
-      <div class="trending-posts">${count} post${count>1?'s':''}</div>
-    </div>
-  `).join('');
+  widget.innerHTML = sorted.length
+    ? sorted.map(([tag, count], i) => `<div class="trending-item"><div class="trending-num">#${i + 1} · Trending</div><div class="trending-name">#${escHtml(tag)}</div><div class="trending-posts">${count} post${count > 1 ? 's' : ''}</div></div>`).join('')
+    : '<div class="trending-item" style="color:var(--text3);font-size:13px">No trending topics yet</div>';
 }
 
-/* ─────────────────────────────────────────────────────
-   AUTH
-───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   AUTH — fixed signup
+═══════════════════════════════════════════════════════════ */
 function switchAuthTab(tab) {
   document.getElementById('authTabSignIn').classList.toggle('active', tab === 'signin');
   document.getElementById('authTabSignUp').classList.toggle('active', tab === 'signup');
@@ -3050,8 +1644,13 @@ function switchAuthTab(tab) {
 }
 
 function showAuthError(msg) {
+  // Strip Firebase boilerplate from error messages
+  const clean = msg
+    .replace(/^Firebase:\s*/i, '')
+    .replace(/\s*\(auth\/[^)]+\)\.?/g, '')
+    .trim();
   const el = document.getElementById('authError');
-  el.textContent = msg;
+  el.textContent = clean || msg;
   el.classList.add('show');
 }
 
@@ -3061,20 +1660,15 @@ async function authWithGoogle() {
     const { auth, googleProvider, signInWithPopup, db, doc, setDoc, serverTimestamp } = window.FB;
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
-
-    // Create/update user doc
-    const userRef = doc(db, 'users', user.uid);
-    await setDoc(userRef, {
+    await setDoc(doc(db, 'users', user.uid), {
       displayName: user.displayName,
       photoURL: user.photoURL,
       email: user.email,
       username: user.email?.split('@')[0],
-      createdAt: serverTimestamp(),
     }, { merge: true });
-
     toast('Welcome back, ' + user.displayName + '!', 'success');
-  } catch(e) {
-    showAuthError(e.message);
+  } catch (e) {
+    if (e.code !== 'auth/popup-closed-by-user') showAuthError(e.message);
   }
 }
 
@@ -3082,34 +1676,60 @@ async function signInWithEmail() {
   if (!window.FB) { toast('Firebase not connected yet!', 'error'); return; }
   const email = document.getElementById('signinEmail').value.trim();
   const pass = document.getElementById('signinPass').value;
-  if (!email || !pass) { showAuthError('Please enter email and password.'); return; }
+  if (!email || !pass) { showAuthError('Please enter your email and password.'); return; }
   try {
     const { auth, signInWithEmailAndPassword } = window.FB;
     await signInWithEmailAndPassword(auth, email, pass);
-    toast('Signed in!', 'success');
-  } catch(e) {
-    showAuthError(e.message.replace('Firebase: ',''));
+    document.getElementById('authError').classList.remove('show');
+    toast('Welcome back!', 'success');
+  } catch (e) {
+    // Map common Firebase auth errors to friendly messages
+    const friendlyErrors = {
+      'auth/user-not-found': 'No account found with that email.',
+      'auth/wrong-password': 'Incorrect password.',
+      'auth/invalid-credential': 'Invalid email or password.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
+    };
+    showAuthError(friendlyErrors[e.code] || e.message);
   }
 }
 
 async function signUpWithEmail() {
   if (!window.FB) { toast('Firebase not connected yet!', 'error'); return; }
+
+  const displayName = document.getElementById('signupName').value.trim();
   const email = document.getElementById('signupEmail').value.trim();
   const pass = document.getElementById('signupPass').value;
-  const username = document.getElementById('signupUsername').value.trim().toLowerCase().replace(/\s+/g,'_');
+  const username = document.getElementById('signupUsername').value.trim().toLowerCase().replace(/\s+/g, '_');
 
-  if (!email || !pass || !username) { showAuthError('Please fill all fields.'); return; }
+  // Validate before hitting Firebase
+  if (!displayName) { showAuthError('Please enter your display name.'); return; }
+  if (!email) { showAuthError('Please enter your email address.'); return; }
+  if (!pass) { showAuthError('Please enter a password.'); return; }
   if (pass.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
-  if (!/^[a-z0-9_]{3,20}$/.test(username)) { showAuthError('Username: 3-20 chars, letters/numbers/underscores only.'); return; }
+  if (!username) { showAuthError('Please choose a username.'); return; }
+  if (!/^[a-z0-9_]{3,20}$/.test(username)) { showAuthError('Username must be 3–20 characters and contain only letters, numbers, or underscores.'); return; }
+
+  const btn = document.getElementById('signupBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;display:inline-block"></span> Creating account…';
 
   try {
     const { auth, db, createUserWithEmailAndPassword, updateProfile, doc, setDoc, serverTimestamp } = window.FB;
+
+    // Step 1: Create auth user
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    await updateProfile(cred.user, { displayName: username });
+
+    // Step 2: Set display name on auth profile
+    await updateProfile(cred.user, { displayName: displayName });
+
+    // Step 3: Create Firestore user document
+    // Using cred.user.uid directly (not window.currentUser which may not be set yet)
     await setDoc(doc(db, 'users', cred.user.uid), {
-      displayName: username,
-      username,
-      email,
+      displayName: displayName,
+      username: username,
+      email: email,
       photoURL: '',
       bio: '',
       location: '',
@@ -3118,9 +1738,20 @@ async function signUpWithEmail() {
       posts: 0,
       createdAt: serverTimestamp(),
     });
+
+    document.getElementById('authError').classList.remove('show');
     toast('Account created! Welcome to December 8 🇸🇾', 'success');
-  } catch(e) {
-    showAuthError(e.message.replace('Firebase: ',''));
+  } catch (e) {
+    const friendlyErrors = {
+      'auth/email-already-in-use': 'An account with that email already exists.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/weak-password': 'Password is too weak. Please use at least 6 characters.',
+      'auth/network-request-failed': 'Network error. Please check your connection.',
+    };
+    showAuthError(friendlyErrors[e.code] || e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Create Account';
   }
 }
 
@@ -3130,69 +1761,67 @@ async function signOutUser() {
   toast('Signed out.', 'success');
 }
 
-/* ─────────────────────────────────────────────────────
-   PROFILE MANAGEMENT
-───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   PROFILE — avatar uses base64 (no Storage)
+═══════════════════════════════════════════════════════════ */
 function toggleEditForm() {
-  const form = document.getElementById('profileEditForm');
-  form.classList.toggle('show');
+  document.getElementById('profileEditForm').classList.toggle('show');
   window.scrollTo(0, 200);
 }
 
 async function saveProfile() {
   if (!window.currentUser || !window.FB) return;
   const name = document.getElementById('editName').value.trim();
-  const username = document.getElementById('editUsername').value.trim().toLowerCase().replace(/\s+/g,'_');
+  const username = document.getElementById('editUsername').value.trim().toLowerCase().replace(/\s+/g, '_');
   const bio = document.getElementById('editBio').value.trim();
   const location = document.getElementById('editLocation').value.trim();
-
   if (!name) { toast('Name is required', 'error'); return; }
 
   try {
     const { db, auth, doc, updateDoc, updateProfile } = window.FB;
     await updateProfile(auth.currentUser, { displayName: name });
-    await updateDoc(doc(db, 'users', window.currentUser.uid), {
-      displayName: name, username, bio, location
-    });
+    await updateDoc(doc(db, 'users', window.currentUser.uid), { displayName: name, username, bio, location });
     window.currentUserProfile = { ...window.currentUserProfile, displayName: name, username, bio, location };
 
     document.getElementById('profileName').textContent = name;
     document.getElementById('profileHandle').textContent = '@' + username;
     document.getElementById('profileBio').textContent = bio;
-    if (location) {
-      document.getElementById('profileLocation').textContent = location;
-      document.getElementById('profileLocationEl').style.display = 'flex';
-    }
+    if (location) { document.getElementById('profileLocation').textContent = location; document.getElementById('profileLocationEl').style.display = 'flex'; }
     document.getElementById('sidebarName').textContent = name;
     document.getElementById('sidebarHandle').textContent = '@' + username;
-
     toast('Profile updated!', 'success');
     toggleEditForm();
-  } catch(e) {
+  } catch (e) {
     toast('Error: ' + e.message, 'error');
   }
 }
 
+// Avatar: convert to base64, save in Firestore (no Storage needed)
 async function uploadAvatar(e) {
-  if (!window.currentUser || !window.FB) { toast('Sign in first', 'error'); return; }
+  if (!window.currentUser) { toast('Sign in first', 'error'); return; }
   const file = e.target.files[0];
   if (!file) return;
+  if (file.size > 500 * 1024) { toast('Please use an image under 500KB for your avatar', 'error'); return; }
 
-  toast('Uploading photo…', 'success');
+  toast('Updating photo…', 'success');
   try {
-    const { storage, auth, db, ref, uploadBytes, getDownloadURL, updateProfile, doc, updateDoc } = window.FB;
-    const r = ref(storage, `avatars/${window.currentUser.uid}`);
-    const snap = await uploadBytes(r, file);
-    const url = await getDownloadURL(snap.ref);
+    const dataUrl = await fileToBase64(file);
 
-    await updateProfile(auth.currentUser, { photoURL: url });
-    await updateDoc(doc(db, 'users', window.currentUser.uid), { photoURL: url });
+    if (window.FB) {
+      const { db, auth, doc, updateDoc, updateProfile } = window.FB;
+      await updateProfile(auth.currentUser, { photoURL: dataUrl });
+      await updateDoc(doc(db, 'users', window.currentUser.uid), { photoURL: dataUrl });
+    }
 
-    document.getElementById('profileAvatar').src = url;
-    document.getElementById('sidebarAvatar').src = url;
-    document.getElementById('writeAvatar').src = url;
+    document.getElementById('profileAvatar').src = dataUrl;
+    document.getElementById('sidebarAvatar').src = dataUrl;
+    const wa = document.getElementById('writeAvatar');
+    if (wa) wa.src = dataUrl;
+    const ma = document.getElementById('mobileAvatar');
+    if (ma) ma.src = dataUrl;
+    if (window.currentUserProfile) window.currentUserProfile.photoURL = dataUrl;
     toast('Profile photo updated!', 'success');
-  } catch(e) {
+  } catch (e) {
     toast('Upload failed: ' + e.message, 'error');
   }
 }
@@ -3200,13 +1829,7 @@ async function uploadAvatar(e) {
 async function loadUserPosts(uid) {
   const container = document.getElementById('userPosts');
   container.innerHTML = '<div class="page-loader"><div class="loader"></div></div>';
-
-  if (!window.FB) {
-    const myPosts = SAMPLE_POSTS.filter(p => Math.random() > 0.5); // demo
-    renderPosts(container, myPosts);
-    return;
-  }
-
+  if (!window.FB) { renderPosts(container, []); return; }
   try {
     const { db, collection, query, where, orderBy, getDocs } = window.FB;
     const q = query(collection(db, 'posts'), where('authorUid', '==', uid), orderBy('createdAt', 'desc'));
@@ -3214,73 +1837,57 @@ async function loadUserPosts(uid) {
     const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderPosts(container, posts);
     document.getElementById('postCountEl').textContent = posts.length;
-  } catch(e) {
+  } catch (e) {
     renderPosts(container, []);
   }
 }
 
-/* ─────────────────────────────────────────────────────
-   MODAL
-───────────────────────────────────────────────────── */
-function openModal(title, bodyHtml) {
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalBody').innerHTML = bodyHtml;
-  document.getElementById('modalOverlay').classList.add('open');
-}
+/* ═══════════════════════════════════════════════════════════
+   MODAL / TOAST
+═══════════════════════════════════════════════════════════ */
+function openModal(title, bodyHtml) { document.getElementById('modalTitle').textContent = title; document.getElementById('modalBody').innerHTML = bodyHtml; document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-}
-
-/* ─────────────────────────────────────────────────────
-   TOAST
-───────────────────────────────────────────────────── */
 function toast(msg, type = 'success') {
   const container = document.getElementById('toastContainer');
   const el = document.createElement('div');
   el.className = `toast ${type}`;
   el.textContent = msg;
   container.appendChild(el);
-  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'scale(0.9)'; setTimeout(() => el.remove(), 300); }, 2500);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'scale(0.9)'; el.style.transition = 'all 0.3s'; setTimeout(() => el.remove(), 300); }, 2500);
 }
 
-/* ─────────────────────────────────────────────────────
-   THEME TOGGLE
-───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════════════════════ */
 let isLight = localStorage.getItem('theme') === 'light';
 
 function applyTheme() {
   const html = document.documentElement;
   const track = document.getElementById('themeTrack');
   const label = document.getElementById('themeLabel');
-  const icon  = document.getElementById('themeIcon');
+  const icon = document.getElementById('themeIcon');
   const mobileIcon = document.getElementById('mobileThemeIcon');
   const sunPath = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
   const moonPath = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
   if (isLight) {
-    html.classList.add('light');
-    track && track.classList.add('on');
+    html.classList.add('light'); track && track.classList.add('on');
     if (label) label.textContent = 'Dark Mode';
     if (icon) icon.innerHTML = moonPath;
     if (mobileIcon) mobileIcon.innerHTML = moonPath;
   } else {
-    html.classList.remove('light');
-    track && track.classList.remove('on');
+    html.classList.remove('light'); track && track.classList.remove('on');
     if (label) label.textContent = 'Light Mode';
     if (icon) icon.innerHTML = sunPath;
     if (mobileIcon) mobileIcon.innerHTML = sunPath;
   }
 }
 
-function toggleTheme() {
-  isLight = !isLight;
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
-  applyTheme();
-}
+function toggleTheme() { isLight = !isLight; localStorage.setItem('theme', isLight ? 'light' : 'dark'); applyTheme(); }
 
-/* ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
    SEARCH
-───────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════ */
 let searchFilter = 'all';
 let searchDebounceTimer = null;
 
@@ -3290,145 +1897,73 @@ function setFilter(f) {
   const chip = document.getElementById('filter-' + f);
   if (chip) chip.classList.add('active');
   const q = document.getElementById('searchInput').value.trim();
-  if (q) doSearch();
+  if (q) doSearch(); else if (f !== 'all' && f !== 'posts' && f !== 'tags') doSearchCommunity(f);
 }
 
 function handleSearchInput() {
   const q = document.getElementById('searchInput').value;
-  const clearBtn = document.getElementById('searchClear');
-  clearBtn.classList.toggle('show', q.length > 0);
+  document.getElementById('searchClear').classList.toggle('show', q.length > 0);
   clearTimeout(searchDebounceTimer);
-  if (!q.trim()) {
-    showSearchDefault();
-    return;
-  }
+  if (!q.trim()) { showSearchDefault(); return; }
   searchDebounceTimer = setTimeout(doSearch, 300);
 }
 
-function clearSearch() {
-  document.getElementById('searchInput').value = '';
-  document.getElementById('searchClear').classList.remove('show');
-  showSearchDefault();
-}
-
-function showSearchDefault() {
-  document.getElementById('searchDefault').classList.remove('hidden');
-  document.getElementById('searchResults').classList.add('hidden');
-}
-
-function searchTag(tag) {
-  document.getElementById('searchInput').value = '#' + tag;
-  document.getElementById('searchClear').classList.add('show');
-  setFilter('tags');
-  doSearch();
-}
-
-function searchCommunity(id) {
-  setFilter(id);
-  document.getElementById('searchInput').value = '';
-  document.getElementById('searchClear').classList.remove('show');
-  doSearchCommunity(id);
-}
+function clearSearch() { document.getElementById('searchInput').value = ''; document.getElementById('searchClear').classList.remove('show'); showSearchDefault(); }
+function showSearchDefault() { document.getElementById('searchDefault').classList.remove('hidden'); document.getElementById('searchResults').classList.add('hidden'); }
+function searchTag(tag) { document.getElementById('searchInput').value = '#' + tag; document.getElementById('searchClear').classList.add('show'); setFilter('tags'); doSearch(); }
+function searchCommunity(id) { setFilter(id); document.getElementById('searchInput').value = ''; document.getElementById('searchClear').classList.remove('show'); doSearchCommunity(id); }
 
 function doSearchCommunity(id) {
   const community = COMMUNITIES.find(c => c.id === id);
   const label = community ? `${community.flag} ${community.name}` : id;
-  const results = SAMPLE_POSTS.filter(p => p.community === id);
-
+  const results = (window._allLoadedPosts || SAMPLE_POSTS).filter(p => p.community === id);
   document.getElementById('searchDefault').classList.add('hidden');
   document.getElementById('searchResults').classList.remove('hidden');
   document.getElementById('searchMeta').innerHTML = `Showing posts in <strong>${label}</strong> — <strong>${results.length}</strong> result${results.length !== 1 ? 's' : ''}`;
-
   const list = document.getElementById('searchResultsList');
-  if (!results.length) {
-    list.innerHTML = `<div class="search-empty">
-      <div class="search-empty-icon">🔍</div>
-      <h3>No posts in this community yet</h3>
-      <p>Be the first to post in ${label}!</p>
-    </div>`;
-    return;
-  }
-  list.innerHTML = results.map(p => buildPostCard(p)).join('');
+  list.innerHTML = results.length
+    ? results.map(p => buildPostCard(p)).join('')
+    : `<div class="search-empty"><div class="search-empty-icon">🔍</div><h3>No posts in this community yet</h3><p>Be the first to post in ${label}!</p></div>`;
 }
 
 function doSearch() {
   const raw = document.getElementById('searchInput').value.trim();
   if (!raw) { showSearchDefault(); return; }
-
   const q = raw.replace(/^#/, '').toLowerCase();
   const isTagSearch = raw.startsWith('#') || searchFilter === 'tags';
-
-  // Pull all available posts (Firebase or sample)
-  const allPosts = window._allLoadedPosts && window._allLoadedPosts.length
-    ? window._allLoadedPosts
-    : SAMPLE_POSTS;
-
+  const allPosts = window._allLoadedPosts && window._allLoadedPosts.length ? window._allLoadedPosts : SAMPLE_POSTS;
   let results = allPosts.filter(post => {
-    // Community filter
     if (searchFilter !== 'all' && searchFilter !== 'posts' && searchFilter !== 'tags') {
       if (post.community !== searchFilter) return false;
     }
-    if (isTagSearch) {
-      return (post.tags || []).some(t => t.toLowerCase().includes(q));
-    }
-    // Full-text search across title, body, author, tags, community
-    const haystack = [
-      post.title, post.body, post.authorName, post.authorHandle,
-      post.community, post.communityName, ...(post.tags || [])
-    ].join(' ').toLowerCase();
+    if (isTagSearch) return (post.tags || []).some(t => t.toLowerCase().includes(q));
+    const haystack = [post.title, post.body, post.authorName, post.authorHandle, post.community, post.communityName, ...(post.tags || [])].join(' ').toLowerCase();
     return haystack.includes(q);
   });
-
-  // Sort by relevance (title match first)
-  results.sort((a, b) => {
-    const aTitle = (a.title || '').toLowerCase().includes(q) ? 1 : 0;
-    const bTitle = (b.title || '').toLowerCase().includes(q) ? 1 : 0;
-    return bTitle - aTitle;
-  });
-
+  results.sort((a, b) => ((b.title || '').toLowerCase().includes(q) ? 1 : 0) - ((a.title || '').toLowerCase().includes(q) ? 1 : 0));
   document.getElementById('searchDefault').classList.add('hidden');
   document.getElementById('searchResults').classList.remove('hidden');
-
-  const filterLabel = searchFilter !== 'all'
-    ? ` in <strong>${getCommunityLabel(searchFilter) || searchFilter}</strong>` : '';
-  document.getElementById('searchMeta').innerHTML =
-    `<strong>${results.length}</strong> result${results.length !== 1 ? 's' : ''} for <strong>"${escHtml(raw)}"</strong>${filterLabel}`;
-
+  const filterLabel = (searchFilter !== 'all') ? ` in <strong>${getCommunityLabel(searchFilter) || searchFilter}</strong>` : '';
+  document.getElementById('searchMeta').innerHTML = `<strong>${results.length}</strong> result${results.length !== 1 ? 's' : ''} for <strong>"${escHtml(raw)}"</strong>${filterLabel}`;
   const list = document.getElementById('searchResultsList');
-  if (!results.length) {
-    list.innerHTML = `<div class="search-empty">
-      <div class="search-empty-icon">🔍</div>
-      <h3>No results found</h3>
-      <p>Try different keywords, or browse communities for relevant posts.</p>
-    </div>`;
-    return;
-  }
-
-  list.innerHTML = results.map(post => buildPostCardHighlighted(post, q)).join('');
+  list.innerHTML = results.length
+    ? results.map(post => buildPostCardHighlighted(post, q)).join('')
+    : `<div class="search-empty"><div class="search-empty-icon">🔍</div><h3>No results found</h3><p>Try different keywords, or browse communities for relevant posts.</p></div>`;
 }
 
 function buildPostCardHighlighted(post, query) {
-  // Build normal card then inject highlights
   let html = buildPostCard(post);
   if (!query) return html;
-
-  // Highlight in title and body sections
   const re = new RegExp('(' + escRegex(query) + ')', 'gi');
-  // Only highlight inside text content, not inside attributes
-  html = html.replace(/>([^<]+)</g, (match, text) => {
-    return '>' + text.replace(re, '<mark class="search-highlight">$1</mark>') + '<';
-  });
+  html = html.replace(/>([^<]+)</g, (match, text) => '>' + text.replace(re, '<mark class="search-highlight">$1</mark>') + '<');
   return html;
 }
 
-function escRegex(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
+function escRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
-/* ─────────────────────────────────────────────────────
-   COMMENT SYSTEM
-───────────────────────────────────────────────────── */
-
+/* ═══════════════════════════════════════════════════════════
+   COMMENTS
+═══════════════════════════════════════════════════════════ */
 const commentStore = {};
 const loadedComments = new Set();
 const likedComments = new Set(JSON.parse(localStorage.getItem('liked_comments') || '[]'));
@@ -3447,19 +1982,12 @@ function toggleComments(postId, btn) {
   const section = document.getElementById('comments-' + postId);
   if (!section) return;
   const isOpen = section.classList.contains('open');
-  if (isOpen) {
-    section.classList.remove('open');
-    btn.classList.remove('commenting');
-    return;
-  }
+  if (isOpen) { section.classList.remove('open'); btn.classList.remove('commenting'); return; }
   section.classList.add('open');
   btn.classList.add('commenting');
   const composeAvatar = document.getElementById('compose-avatar-' + postId);
   if (composeAvatar) composeAvatar.innerHTML = getCommentAvatar();
-  if (!loadedComments.has(postId)) {
-    loadedComments.add(postId);
-    loadComments(postId);
-  }
+  if (!loadedComments.has(postId)) { loadedComments.add(postId); loadComments(postId); }
 }
 
 async function loadComments(postId) {
@@ -3477,21 +2005,17 @@ async function loadComments(postId) {
         renderComments(postId, comments);
         const countEl = document.querySelector('.comment-count-' + postId);
         if (countEl) countEl.textContent = formatNum(comments.length);
-        if (label) label.textContent = comments.length
-          ? `${comments.length} comment${comments.length > 1 ? 's' : ''}`
-          : 'Be the first to comment';
+        if (label) label.textContent = comments.length ? `${comments.length} comment${comments.length > 1 ? 's' : ''}` : 'Be the first to comment';
       });
       return;
-    } catch(e) {}
+    } catch (e) {}
   }
 
   // Demo fallback
   const sampleComments = getSampleComments(postId);
   commentStore[postId] = sampleComments;
   renderComments(postId, sampleComments);
-  if (label) label.textContent = sampleComments.length
-    ? `${sampleComments.length} comment${sampleComments.length > 1 ? 's' : ''}`
-    : 'Be the first to comment';
+  if (label) label.textContent = sampleComments.length ? `${sampleComments.length} comment${sampleComments.length > 1 ? 's' : ''}` : 'Be the first to comment';
   const countEl = document.querySelector('.comment-count-' + postId);
   if (countEl && sampleComments.length) countEl.textContent = formatNum(sampleComments.length);
 }
@@ -3499,25 +2023,25 @@ async function loadComments(postId) {
 function getSampleComments(postId) {
   const banks = {
     sample1: [
-      { id:'c1a', authorName:'Sara Yousef',  authorHandle:'sara_y',   text:'This gives me so much hope. My family just returned to Homs last month after 10 years. 🥲', likes:24, createdAt: new Date(Date.now()-3600000) },
-      { id:'c1b', authorName:'Khaled M.',    authorHandle:'khaled_m', text:'The markets in Bab Touma are back! I visited last week — incredible energy.', likes:18, createdAt: new Date(Date.now()-1800000) },
-      { id:'c1c', authorName:'Nour Al-Din',  authorHandle:'nour_ad',  text:'Still cautious but hopeful. Infrastructure needs so much work still.', likes:9, createdAt: new Date(Date.now()-900000) },
+      { id: 'c1a', authorName: 'Sara Yousef', authorHandle: 'sara_y', text: 'This gives me so much hope. My family just returned to Homs last month after 10 years. 🥲', likes: 24, createdAt: new Date(Date.now() - 3600000) },
+      { id: 'c1b', authorName: 'Khaled M.', authorHandle: 'khaled_m', text: 'The markets in Bab Touma are back! I visited last week — incredible energy.', likes: 18, createdAt: new Date(Date.now() - 1800000) },
+      { id: 'c1c', authorName: 'Nour Al-Din', authorHandle: 'nour_ad', text: 'Still cautious but hopeful. Infrastructure needs so much work still.', likes: 9, createdAt: new Date(Date.now() - 900000) },
     ],
     sample2: [
-      { id:'c2a', authorName:'Fatima H.', authorHandle:'fatima_h', text:'Thank you for this breakdown! Been waiting months for clarity on family reunion. 🙏', likes:31, createdAt: new Date(Date.now()-7200000) },
-      { id:'c2b', authorName:'Tariq S.',  authorHandle:'tariq_s',  text:'Does this apply to siblings too, or just spouses and children?', likes:7,  createdAt: new Date(Date.now()-3600000) },
+      { id: 'c2a', authorName: 'Fatima H.', authorHandle: 'fatima_h', text: 'Thank you for this breakdown! Been waiting months for clarity on family reunion. 🙏', likes: 31, createdAt: new Date(Date.now() - 7200000) },
+      { id: 'c2b', authorName: 'Tariq S.', authorHandle: 'tariq_s', text: 'Does this apply to siblings too, or just spouses and children?', likes: 7, createdAt: new Date(Date.now() - 3600000) },
     ],
     sample3: [
-      { id:'c3a', authorName:'Layla K.',   authorHandle:'layla_k',   text:'Just used one of these legal clinics in Berlin last week — very helpful team!', likes:14, createdAt: new Date(Date.now()-7200000) },
-      { id:'c3b', authorName:'Hassan R.',  authorHandle:'hassan_r',  text:'Do you have contacts in Munich specifically? My Aufenthaltstitel expires next month.', likes:5,  createdAt: new Date(Date.now()-3000000) },
+      { id: 'c3a', authorName: 'Layla K.', authorHandle: 'layla_k', text: 'Just used one of these legal clinics in Berlin last week — very helpful team!', likes: 14, createdAt: new Date(Date.now() - 7200000) },
+      { id: 'c3b', authorName: 'Hassan R.', authorHandle: 'hassan_r', text: 'Do you have contacts in Munich specifically? My Aufenthaltstitel expires next month.', likes: 5, createdAt: new Date(Date.now() - 3000000) },
     ],
     sample4: [
-      { id:'c4a', authorName:'Dalia F.',   authorHandle:'dalia_f',   text:'This made me cry. I teach my kids Arabic every day and cook Syrian food every Friday. 🇸🇾', likes:89, createdAt: new Date(Date.now()-86400000) },
-      { id:'c4b', authorName:'Sami B.',    authorHandle:'sami_b',    text:'Beautiful words. My children were born in Sweden but they know they are Syrian first.', likes:45, createdAt: new Date(Date.now()-43200000) },
-      { id:'c4c', authorName:'Hana M.',    authorHandle:'hana_m',    text:'We started a Syrian cultural club here. Anyone in Edinburgh — DM me!', likes:22, createdAt: new Date(Date.now()-21600000) },
+      { id: 'c4a', authorName: 'Dalia F.', authorHandle: 'dalia_f', text: 'This made me cry. I teach my kids Arabic every day and cook Syrian food every Friday. 🇸🇾', likes: 89, createdAt: new Date(Date.now() - 86400000) },
+      { id: 'c4b', authorName: 'Sami B.', authorHandle: 'sami_b', text: 'Beautiful words. My children were born in Sweden but they know they are Syrian first.', likes: 45, createdAt: new Date(Date.now() - 43200000) },
+      { id: 'c4c', authorName: 'Hana M.', authorHandle: 'hana_m', text: 'We started a Syrian cultural club here. Anyone in Edinburgh — DM me!', likes: 22, createdAt: new Date(Date.now() - 21600000) },
     ],
     sample5: [
-      { id:'c5a', authorName:'Rania O.', authorHandle:'rania_o', text:'Will there be a virtual option? I\'m in LA not NYC.', likes:11, createdAt: new Date(Date.now()-14400000) },
+      { id: 'c5a', authorName: 'Rania O.', authorHandle: 'rania_o', text: "Will there be a virtual option? I'm in LA not NYC.", likes: 11, createdAt: new Date(Date.now() - 14400000) },
     ],
   };
   return banks[postId] || [];
@@ -3526,15 +2050,12 @@ function getSampleComments(postId) {
 function renderComments(postId, comments) {
   const list = document.getElementById('comment-list-' + postId);
   if (!list) return;
-  if (!comments.length) {
-    list.innerHTML = `<div style="text-align:center;padding:12px 0;font-size:13px;color:var(--text3)">No comments yet — start the conversation!</div>`;
-    return;
-  }
+  if (!comments.length) { list.innerHTML = `<div style="text-align:center;padding:12px 0;font-size:13px;color:var(--text3)">No comments yet — start the conversation!</div>`; return; }
   const SHOW = 3;
   const visible = comments.slice(0, SHOW);
   const hidden = comments.length - SHOW;
   list.innerHTML = visible.map(c => buildCommentHTML(c)).join('') +
-    (hidden > 0 ? `<div class="comment-load-more" onclick="showAllComments('${postId}')">Show ${hidden} more comment${hidden>1?'s':''} ↓</div>` : '');
+    (hidden > 0 ? `<div class="comment-load-more" onclick="showAllComments('${postId}')">Show ${hidden} more comment${hidden > 1 ? 's' : ''} ↓</div>` : '');
 }
 
 function showAllComments(postId) {
@@ -3544,7 +2065,7 @@ function showAllComments(postId) {
 }
 
 function buildCommentHTML(c) {
-  const initials = (c.authorName || 'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const initials = (c.authorName || 'A').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   const avatarInner = c.authorAvatar
     ? `<img src="${escHtml(c.authorAvatar)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" onerror="this.parentElement.textContent='${initials}'" />`
     : initials;
@@ -3555,15 +2076,15 @@ function buildCommentHTML(c) {
     <div style="flex:1;min-width:0">
       <div class="comment-bubble">
         <div class="comment-header">
-          <span class="comment-author">${escHtml(c.authorName||'Anonymous')}</span>
-          <span class="comment-handle">@${escHtml(c.authorHandle||'user')}</span>
+          <span class="comment-author">${escHtml(c.authorName || 'Anonymous')}</span>
+          <span class="comment-handle">@${escHtml(c.authorHandle || 'user')}</span>
           <span class="comment-time">${time}</span>
         </div>
-        <div class="comment-text">${escHtml(c.text||'')}</div>
+        <div class="comment-text">${escHtml(c.text || '')}</div>
       </div>
-      <button class="comment-like-btn ${liked?'liked':''}" onclick="toggleCommentLike('${c.id}',${c.likes||0},this)">
-        <svg fill="${liked?'currentColor':'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-        <span id="clikes-${c.id}">${c.likes||0}</span>
+      <button class="comment-like-btn ${liked ? 'liked' : ''}" onclick="toggleCommentLike('${c.id}',${c.likes || 0},this)">
+        <svg fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        <span id="clikes-${c.id}">${c.likes || 0}</span>
       </button>
     </div>
   </div>`;
@@ -3571,14 +2092,10 @@ function buildCommentHTML(c) {
 
 function toggleCommentLike(commentId, currentLikes, btn) {
   if (likedComments.has(commentId)) {
-    likedComments.delete(commentId);
-    btn.classList.remove('liked');
-    btn.querySelector('svg').setAttribute('fill', 'none');
+    likedComments.delete(commentId); btn.classList.remove('liked'); btn.querySelector('svg').setAttribute('fill', 'none');
     document.getElementById('clikes-' + commentId).textContent = Math.max(0, currentLikes - 1);
   } else {
-    likedComments.add(commentId);
-    btn.classList.add('liked');
-    btn.querySelector('svg').setAttribute('fill', 'currentColor');
+    likedComments.add(commentId); btn.classList.add('liked'); btn.querySelector('svg').setAttribute('fill', 'currentColor');
     document.getElementById('clikes-' + commentId).textContent = currentLikes + 1;
   }
   localStorage.setItem('liked_comments', JSON.stringify([...likedComments]));
@@ -3588,109 +2105,74 @@ async function submitComment(postId) {
   const input = document.getElementById('comment-input-' + postId);
   const text = input?.value.trim();
   if (!text) return;
-  if (!window.currentUser) {
-    toast('Sign in to comment!', 'error');
-    navigate('profile');
-    return;
-  }
+  if (!window.currentUser) { toast('Sign in to comment!', 'error'); navigate('profile'); return; }
+
   const profile = window.currentUserProfile || {};
   const user = window.currentUser;
   const newComment = {
-    id: 'local-' + Date.now(),
-    text,
+    id: 'local-' + Date.now(), text,
     authorName: profile.displayName || user.displayName || 'Anonymous',
     authorHandle: profile.username || user.email?.split('@')[0] || 'user',
     authorAvatar: profile.photoURL || user.photoURL || '',
-    likes: 0,
-    createdAt: new Date(),
+    likes: 0, createdAt: new Date(),
   };
+
   if (!commentStore[postId]) commentStore[postId] = [];
   commentStore[postId].push(newComment);
-  input.value = '';
-  input.style.minHeight = '';
+  input.value = ''; input.style.minHeight = '';
   renderComments(postId, commentStore[postId]);
+  showAllComments(postId);
+
   const countEl = document.querySelector('.comment-count-' + postId);
   if (countEl) countEl.textContent = formatNum(commentStore[postId].length);
   const label = document.getElementById('comment-count-label-' + postId);
   if (label) label.textContent = `${commentStore[postId].length} comment${commentStore[postId].length > 1 ? 's' : ''}`;
-  showAllComments(postId);
 
   if (window.FB) {
     try {
-      const { db, collection, addDoc, serverTimestamp, doc, updateDoc, increment } = window.FB;
+      const { db, collection, addDoc, doc, updateDoc, increment, serverTimestamp } = window.FB;
       await addDoc(collection(db, 'posts', postId, 'comments'), {
         text, authorUid: user.uid,
         authorName: newComment.authorName, authorHandle: newComment.authorHandle,
         authorAvatar: newComment.authorAvatar, likes: 0, createdAt: serverTimestamp(),
       });
       await updateDoc(doc(db, 'posts', postId), { comments: increment(1) });
-    } catch(e) {}
-  } else {
-    toast('Comment posted! (demo mode)', 'success');
+    } catch (e) {}
   }
 }
 
-function cancelComment(postId) {
-  const input = document.getElementById('comment-input-' + postId);
-  if (input) { input.value = ''; input.blur(); input.style.minHeight = ''; }
-}
+function cancelComment(postId) { const input = document.getElementById('comment-input-' + postId); if (input) { input.value = ''; input.blur(); input.style.minHeight = ''; } }
+function handleCommentKey(e, postId) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitComment(postId); } if (e.key === 'Escape') cancelComment(postId); }
+function autoResizeTextarea(el) { el.style.minHeight = 'auto'; el.style.minHeight = Math.min(el.scrollHeight, 120) + 'px'; }
 
-function handleCommentKey(e, postId) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitComment(postId); }
-  if (e.key === 'Escape') cancelComment(postId);
-}
-
-function autoResizeTextarea(el) {
-  el.style.minHeight = 'auto';
-  el.style.minHeight = Math.min(el.scrollHeight, 120) + 'px';
-}
-function escHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function formatNum(n) {
-  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
-  return String(n);
-}
-
+/* ═══════════════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════════════ */
+function escHtml(str) { return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function formatNum(n) { if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M'; if (n >= 1000) return (n / 1000).toFixed(1) + 'K'; return String(n); }
 function formatTime(date) {
-  const now = Date.now();
-  const diff = now - (date instanceof Date ? date.getTime() : now);
+  const diff = Date.now() - (date instanceof Date ? date.getTime() : Date.now());
   if (diff < 60000) return 'just now';
-  if (diff < 3600000) return Math.floor(diff/60000) + 'm';
-  if (diff < 86400000) return Math.floor(diff/3600000) + 'h';
-  if (diff < 604800000) return Math.floor(diff/86400000) + 'd';
-  return date.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+  if (diff < 3600000) return Math.floor(diff / 60000) + 'm';
+  if (diff < 86400000) return Math.floor(diff / 3600000) + 'h';
+  if (diff < 604800000) return Math.floor(diff / 86400000) + 'd';
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
-/* ─────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════
    INIT
-───────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════ */
 (function init() {
-  // Apply saved theme immediately
   applyTheme();
 
-  // Default avatar placeholder
-  const placeholderSvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%2326262f'/%3E%3Ccircle cx='20' cy='16' r='7' fill='%235e5c72'/%3E%3Cellipse cx='20' cy='36' rx='12' ry='8' fill='%235e5c72'/%3E%3C/svg%3E";
+  const placeholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%2326262f'/%3E%3Ccircle cx='20' cy='16' r='7' fill='%235e5c72'/%3E%3Cellipse cx='20' cy='36' rx='12' ry='8' fill='%235e5c72'/%3E%3C/svg%3E";
   document.querySelectorAll('.sidebar-avatar, .post-avatar, .profile-avatar').forEach(img => {
-    if (!img.src || img.src === window.location.href) img.src = placeholderSvg;
-    img.onerror = () => { img.src = placeholderSvg; };
+    if (!img.src || img.src === window.location.href) img.src = placeholder;
+    img.onerror = () => { img.src = placeholder; };
   });
 
-  // Cache sample posts for search
   window._allLoadedPosts = SAMPLE_POSTS;
-
-  // Load feed on init
   loadFeed();
-
-  // If Firebase wasn't connected yet (no onAuthStateChanged fired), show defaults
-  setTimeout(() => {
-    if (!window.FB) {
-      document.getElementById('sidebarName').textContent = 'Connect Firebase';
-      document.getElementById('sidebarHandle').textContent = '@guest';
-    }
-  }, 3000);
 })();
 </script>
 </body>
