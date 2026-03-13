@@ -1534,20 +1534,22 @@ async function submitPost() {
 
   if (!window.FB) { toast('Firebase not connected', 'error'); btn.disabled = false; btn.textContent = 'Post'; return; }
 
-  try {
-    const { db, collection, addDoc, doc, updateDoc, increment, serverTimestamp } = window.FB;
+ try {
+    const { db, collection, addDoc, serverTimestamp } = window.FB;
     const profile = window.currentUserProfile || {};
-    const user    = window.currentUser;
+    const user = window.currentUser; // Get the currently logged-in user
     const imageUrls = pendingImages.map(img => img.dataUrl);
-await addDoc(collection(db, 'posts'), {
+
+    await addDoc(collection(db, 'posts'), {
       title, 
       body, 
       link, 
       community,
-      authorUid: user.uid, // <--- CRITICAL LINE
+      // ADD THIS LINE:
+      authorUid: user.uid, 
       authorName:   profile.displayName || user.displayName || 'Anonymous',
-      authorHandle: profile.username    || user.email?.split('@')[0] || 'user',
-      authorAvatar: profile.photoURL    || user.photoURL || '',
+      authorHandle: profile.username     || user.email?.split('@')[0] || 'user',
+      authorAvatar: profile.photoURL     || user.photoURL || '',
       communityName: getCommunityLabel(community),
       tags: postTags, 
       images: imageUrls,
