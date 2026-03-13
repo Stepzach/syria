@@ -784,7 +784,36 @@ html.light .search-highlight { background: rgba(0,158,118,0.15); }
         <div id="userPosts"><div class="page-loader"><div class="loader"></div></div></div>
       </div>
     </div>
-
+<div class="page" id="page-user-profile">
+  <div class="page-header">
+    <button class="modal-close" onclick="navigate('feed')" style="background:none; margin-right:10px">←</button>
+    <div class="page-title" id="up-header-name">Profile</div>
+  </div>
+  <div class="profile-cover">
+    <div class="profile-cover-pattern"></div>
+  </div>
+  <div class="profile-info-section">
+    <div class="profile-avatar-wrap">
+      <img class="profile-avatar" id="up-avatar" src="" alt="Avatar" />
+    </div>
+    <div class="profile-name" id="up-name">Name</div>
+    <div class="profile-handle" id="up-handle">@username</div>
+    <div class="profile-bio" id="up-bio"></div>
+    <div class="profile-meta-row">
+      <div class="profile-meta-item" id="up-location-el">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+        <span id="up-location"></span>
+      </div>
+    </div>
+    <div class="profile-stats">
+      <div class="profile-stat"><strong id="up-posts-count">0</strong><span>Posts</span></div>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active">Posts</div>
+  </div>
+  <div id="up-posts-list"></div>
+</div>
     <!-- SEARCH -->
     <div class="page" id="page-search">
       <div class="page-header">
@@ -1007,18 +1036,36 @@ function setAvatarSrc(id, src) {
    NAVIGATION
 ══════════════════════════════════════════════════════════ */
 function navigate(page) {
+  // 1. Remove 'active' class from ALL pages and nav items
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  const navEl  = document.getElementById('nav-' + page);  if (navEl)  navEl.classList.add('active');
-  const mnavEl = document.getElementById('mnav-' + page); if (mnavEl) mnavEl.classList.add('active');
+
+  // 2. Define the target element
+  const targetPageId = (page === 'user-profile') ? 'page-user-profile' : 'page-' + page;
+  const pageEl = document.getElementById(targetPageId);
+
+  // 3. Show the page if it exists
+  if (pageEl) {
+    pageEl.classList.add('active');
+  } else {
+    console.error("Page element not found:", targetPageId);
+  }
+
+  // 4. Highlight the Sidebar and Mobile Nav items
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  
+  const mnavEl = document.getElementById('mnav-' + page);
+  if (mnavEl) mnavEl.classList.add('active');
+
+  // 5. App Logic
   currentPage = page;
   window.scrollTo(0, 0);
-  if (page === 'feed')        loadFeed();
+
+  if (page === 'feed') loadFeed();
   if (page === 'communities') loadCommunities();
 }
-
 /* ══════════════════════════════════════════════════════════
    FEED
 ══════════════════════════════════════════════════════════ */
@@ -1097,8 +1144,57 @@ function renderPosts(container, posts) {
   loadTrendingWidget(posts);
 }
 
+async function viewUserProfile(uid) {
+  // 1. If it's the current user, just go to the regular profile page
+  if (window.currentUser && uid === window.currentUser.uid) {
+    navigate('profile');
+    return;
+  }
+
+  // 2. Switch to the view and show loader
+  navigate('user-profile');
+  const list = document.getElementById('up-posts-list');
+  list.innerHTML = '<div class="page-loader"><div class="loader"></div></div>';
+
+  if (!window.FB) return;
+  const { db, doc, getDoc, collection, query, where, orderBy, getDocs } = window.FB;
+
+  try {
+    // 3. Fetch User Data
+    const userSnap = await getDoc(doc(db, "users", uid));
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      document.getElementById('up-header-name').textContent = data.displayName || 'Profile';
+      document.getElementById('up-name').textContent = data.displayName || 'Anonymous';
+      document.getElementById('up-handle').textContent = '@' + (data.username || 'user');
+      document.getElementById('up-bio').textContent = data.bio || '';
+      document.getElementById('up-avatar').src = data.photoURL || "data:image/svg+xml,..."; // use your default svg here
+      
+      if (data.location) {
+        document.getElementById('up-location').textContent = data.location;
+        document.getElementById('up-location-el').style.display = 'flex';
+      } else {
+        document.getElementById('up-location-el').style.display = 'none';
+      }
+    }
+
+    // 4. Fetch User's Posts
+    const q = query(collection(db, 'posts'), where('authorUid', '==', uid), orderBy('createdAt', 'desc'));
+    const postSnap = await getDocs(q);
+    const posts = postSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    
+    document.getElementById('up-posts-count').textContent = posts.length;
+    list.innerHTML = posts.length 
+      ? posts.map(p => buildPostCard(p)).join('') 
+      : '<div class="empty-state"><p>This user hasn’t posted anything yet.</p></div>';
+
+  } catch (e) {
+    console.error("Error loading profile:", e);
+    toast("Could not load profile", "error");
+  }
+}
 /* ══════════════════════════════════════════════════════════
-   POST CARD BUILDER
+   POST CARD BUILDER (FIXED)
 ══════════════════════════════════════════════════════════ */
 function buildPostCard(post, isModalMode = false) {
   const liked    = likedPosts.has(post.id);
@@ -1117,61 +1213,49 @@ function buildPostCard(post, isModalMode = false) {
     imgsHtml = `<div class="post-images ${cls}">${post.images.map(src => `<img class="post-img" src="${escHtml(src)}" loading="lazy" />`).join('')}</div>`;
   }
 
-  let linkHtml = '';
-  if (post.link) {
-    let domain = '';
-    try { domain = new URL(post.link).hostname; } catch(e) {}
-    linkHtml = `<a class="post-link-preview" href="${escHtml(post.link)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">
-      <svg class="link-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-      ${escHtml(domain)} — ${escHtml(post.link.slice(0,60))}</a>`;
-  }
-
-  // In modal mode we show full body; in card mode we clamp
   const bodyClass = isModalMode ? 'post-detail-full-body' : 'post-body';
-
   const cardClick = isModalMode ? '' : `onclick="handleCardClick(event,'${post.id}')"`;
 
   return `<div class="post-card" id="card-${post.id}" ${cardClick}>
     <div class="post-card-header">
-      ${avatarHtml}
+      <div style="cursor:pointer" onclick="event.stopPropagation(); viewUserProfile('${post.authorUid}')">
+        ${avatarHtml}
+      </div>
       <div class="post-meta">
         <div class="post-author-row">
-          <span class="post-author-name">${escHtml(post.authorName || 'Anonymous')}</span>
+          <span class="post-author-name" style="cursor:pointer" onclick="event.stopPropagation(); viewUserProfile('${post.authorUid}')">
+            ${escHtml(post.authorName || 'Anonymous')}
+          </span>
           <span class="post-handle">@${escHtml(post.authorHandle || 'user')}</span>
           <span class="post-dot">·</span>
           <span class="post-time">${timeAgo}</span>
-          ${isTrending ? '<span class="trending-badge">🔥 Trending</span>' : ''}
         </div>
         ${communityLabel ? `<div style="margin-top:3px"><span class="post-community-badge">${communityLabel}</span></div>` : ''}
       </div>
     </div>
     ${post.title ? `<div class="post-title">${escHtml(post.title)}</div>` : ''}
     <div class="${bodyClass}">${escHtml(post.body || '')}</div>
-    ${imgsHtml}${linkHtml}
+    ${imgsHtml}
     ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
+    
     <div class="post-actions" onclick="event.stopPropagation()">
       <button class="action-btn ${liked?'liked':''}" onclick="toggleLike('${post.id}',this,${post.likes||0})">
-        <svg fill="${liked?'currentColor':'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        <svg fill="${liked?'currentColor':'none'}" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
         <span class="like-count">${formatNum(post.likes||0)}</span>
       </button>
       <button class="action-btn" id="comment-btn-${post.id}" onclick="toggleComments('${post.id}',this)">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
         <span class="comment-count-${post.id}">${formatNum(post.comments||0)}</span>
       </button>
-      <button class="action-btn" onclick="sharePost('${post.id}')">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-        ${formatNum(post.shares||0)}
-      </button>
-      <button class="action-btn" id="bookmark-btn-${post.id}" onclick="bookmarkPost('${post.id}',this)" style="margin-left:auto">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-      </button>
     </div>
-    ${isModalMode ? '' : `<div class="comment-section" id="comments-${post.id}">
+
+    ${isModalMode ? '' : `
+    <div class="comment-section" id="comments-${post.id}">
       <div class="comment-count-label" id="comment-count-label-${post.id}"></div>
       <div class="comment-compose">
         <div class="comment-avatar" id="compose-avatar-${post.id}">${getCommentAvatarHtml()}</div>
         <div class="comment-input-wrap">
-          <textarea class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment…" rows="1"
+          <textarea class="comment-input" id="comment-input-${post.id}" placeholder="Write a reply..." rows="1" 
             oninput="autoResizeTextarea(this)" onkeydown="handleCommentKey(event,'${post.id}')"></textarea>
           <div class="comment-actions-row">
             <button class="btn-comment-cancel" onclick="cancelComment('${post.id}')">Cancel</button>
@@ -1179,9 +1263,7 @@ function buildPostCard(post, isModalMode = false) {
           </div>
         </div>
       </div>
-      <div class="comment-list" id="comment-list-${post.id}">
-        <div style="text-align:center;padding:8px 0"><div class="loader" style="width:16px;height:16px"></div></div>
-      </div>
+      <div class="comment-list" id="comment-list-${post.id}"></div>
     </div>`}
   </div>`;
 }
@@ -1304,22 +1386,34 @@ async function loadModalComments(postId) {
 function toggleLike(postId, btn, currentLikes) {
   const isLiked = likedPosts.has(postId);
   const newLiked = !isLiked;
-  const newCount = Math.max(0, currentLikes + (newLiked ? 1 : -1));
+  
+  // 1. Update State
   if (newLiked) likedPosts.add(postId); else likedPosts.delete(postId);
-  btn.classList.toggle('liked', newLiked);
-  btn.querySelector('svg').setAttribute('fill', newLiked ? 'currentColor' : 'none');
-  btn.querySelector('.like-count').textContent = formatNum(newCount);
   localStorage.setItem('liked_posts', JSON.stringify([...likedPosts]));
-  // Sync all like buttons for this post (card + modal)
+
+  // 2. Find the post in our local memory to get the "real" base count
+  const all = window._allLoadedPosts || SAMPLE_POSTS;
+  const post = all.find(p => p.id === postId);
+  
+  // Calculate the new total based on the post's stored count
+  // If the user liked it in this session, we add 1 to the original DB count
+  const baseLikes = post ? (post.likes || 0) : currentLikes;
+  const displayCount = newLiked ? baseLikes + 1 : baseLikes;
+
+  // 3. Update ALL UI instances of this post (Feed and Modal)
   document.querySelectorAll(`[onclick*="toggleLike('${postId}'"]`).forEach(b => {
-    if (b === btn) return;
+    const countSpan = b.querySelector('.like-count');
     b.classList.toggle('liked', newLiked);
-    b.querySelector('svg')?.setAttribute('fill', newLiked ? 'currentColor' : 'none');
-    if (b.querySelector('.like-count')) b.querySelector('.like-count').textContent = formatNum(newCount);
+    b.querySelector('svg').setAttribute('fill', newLiked ? 'currentColor' : 'none');
+    if (countSpan) countSpan.textContent = formatNum(displayCount);
   });
+
+  // 4. Update Firestore
   if (window.FB && window.currentUser) {
     const { db, doc, updateDoc, increment } = window.FB;
-    updateDoc(doc(db,'posts',postId), { likes: increment(newLiked ? 1 : -1) }).catch(() => {});
+    updateDoc(doc(db, 'posts', postId), { 
+      likes: increment(newLiked ? 1 : -1) 
+    }).catch(e => console.error("Like sync failed:", e));
   }
 }
 
@@ -1445,7 +1539,24 @@ async function submitPost() {
     const profile = window.currentUserProfile || {};
     const user    = window.currentUser;
     const imageUrls = pendingImages.map(img => img.dataUrl);
-
+await addDoc(collection(db, 'posts'), {
+      title, 
+      body, 
+      link, 
+      community,
+      authorUid: user.uid, // <--- CRITICAL LINE
+      authorName:   profile.displayName || user.displayName || 'Anonymous',
+      authorHandle: profile.username    || user.email?.split('@')[0] || 'user',
+      authorAvatar: profile.photoURL    || user.photoURL || '',
+      communityName: getCommunityLabel(community),
+      tags: postTags, 
+      images: imageUrls,
+      likes: 0, 
+      comments: 0, 
+      shares: 0,
+      createdAt: serverTimestamp(),
+    });
+    
     const ref = await addDoc(collection(db,'posts'), {
       title, body, link, community,
       communityName: getCommunityLabel(community),
