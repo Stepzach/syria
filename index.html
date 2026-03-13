@@ -1522,74 +1522,53 @@ function clearWriteForm() {
 
 async function submitPost() {
   if (!window.currentUser) { navigate('profile'); return; }
-  const title     = document.getElementById('postTitle').value.trim();
-  const body      = document.getElementById('postBody').value.trim();
-  const link      = document.getElementById('postLink').value.trim();
+  const title = document.getElementById('postTitle').value.trim();
+  const body = document.getElementById('postBody').value.trim();
+  const link = document.getElementById('postLink').value.trim();
   const community = document.getElementById('postCommunity').value;
+  
   if (!body && !title) { toast('Please write something first', 'error'); return; }
 
   const btn = document.getElementById('submitPostBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="loader" style="width:16px;height:16px;border-width:2px;display:inline-block"></span>';
 
-  if (!window.FB) { toast('Firebase not connected', 'error'); btn.disabled = false; btn.textContent = 'Post'; return; }
-
- try {
-    const { db, collection, addDoc, serverTimestamp } = window.FB;
+  try {
+    const { db, collection, addDoc, doc, updateDoc, increment, serverTimestamp } = window.FB;
     const profile = window.currentUserProfile || {};
-    const user = window.currentUser; // Get the currently logged-in user
+    const user = window.currentUser;
     const imageUrls = pendingImages.map(img => img.dataUrl);
 
     await addDoc(collection(db, 'posts'), {
-      title, 
-      body, 
-      link, 
-      community,
-      // ADD THIS LINE:
-      authorUid: user.uid, 
-      authorName:   profile.displayName || user.displayName || 'Anonymous',
-      authorHandle: profile.username     || user.email?.split('@')[0] || 'user',
-      authorAvatar: profile.photoURL     || user.photoURL || '',
-      communityName: getCommunityLabel(community),
-      tags: postTags, 
+      title, body, link, community,
+      authorUid: user.uid,
+      authorName: profile.displayName || user.displayName || 'Anonymous',
+      authorHandle: profile.username || user.email?.split('@')[0] || 'user',
+      authorAvatar: profile.photoURL || user.photoURL || '',
+      tags: postTags,
       images: imageUrls,
-      likes: 0, 
-      comments: 0, 
+      likes: 0,
+      comments: 0,
       shares: 0,
       createdAt: serverTimestamp(),
     });
-    
-    const ref = await addDoc(collection(db,'posts'), {
-      title, body, link, community,
-      communityName: getCommunityLabel(community),
-      tags: postTags, images: imageUrls,
-      authorUid: user.uid,
-      authorName:   profile.displayName || user.displayName || 'Anonymous',
-      authorHandle: profile.username   || user.email?.split('@')[0] || 'user',
-      authorAvatar: profile.photoURL   || user.photoURL || '',
-      likes: 0, comments: 0, shares: 0,
-      createdAt: serverTimestamp(),
-    });
 
-    // Increment community post count
     if (community) {
-      try { await updateDoc(doc(db,'communities',community), { posts: increment(1) }); } catch(e) {}
+      await updateDoc(doc(db, 'communities', community), { posts: increment(1) }).catch(()=>{});
     }
-    // Increment user post count
-    try { await updateDoc(doc(db,'users',user.uid), { posts: increment(1) }); } catch(e) {}
+    await updateDoc(doc(db, 'users', user.uid), { posts: increment(1) }).catch(()=>{});
 
-    // Revoke blob URLs after save
     pendingImages.forEach(img => URL.revokeObjectURL(img.url));
-
     toast('Post published! 🎉', 'success');
     clearWriteForm();
     navigate('feed');
+    loadFeed(); // Refresh the feed to show the new post
   } catch(e) {
     toast('Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Post';
   }
-
-  btn.disabled = false;
-  btn.textContent = 'Post';
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -2174,49 +2153,47 @@ function toggleCommentLike(commentId, currentLikes, btn) {
 
 async function submitComment(postId, isModal = false) {
   const inputId = isModal ? 'modal-comment-input-' + postId : 'comment-input-' + postId;
-  const listId  = isModal ? 'modal-comment-list-' + postId  : 'comment-list-' + postId;
-  const input   = document.getElementById(inputId);
-  const text    = input?.value.trim();
+  const input = document.getElementById(inputId);
+  const text = input?.value.trim();
+  
   if (!text) return;
-  if (!window.currentUser) { toast('Sign in to comment!','error'); navigate('profile'); return; }
+  if (!window.currentUser || !window.FB) { 
+    toast('Sign in to comment!', 'error'); 
+    navigate('profile'); 
+    return; 
+  }
 
+  const user = window.currentUser;
   const profile = window.currentUserProfile || {};
-  const user    = window.currentUser;
-  const newComment = {
-    id: 'local-' + Date.now(), text,
-    authorName:   profile.displayName || user.displayName || 'Anonymous',
-    authorHandle: profile.username    || user.email?.split('@')[0] || 'user',
-    authorAvatar: profile.photoURL    || user.photoURL || '',
-    likes: 0, createdAt: new Date(),
-  };
 
-  if (!commentStore[postId]) commentStore[postId] = [];
-  commentStore[postId].push(newComment);
-  input.value = ''; input.style.minHeight = '';
+  try {
+    const { db, collection, addDoc, doc, updateDoc, increment, serverTimestamp } = window.FB;
+    
+    // 1. Clear input immediately for UX
+    input.value = '';
+    input.style.minHeight = '';
 
-  // Update all comment lists for this post
-  const allLists = document.querySelectorAll(`[id$="-comment-list-${postId}"], #comment-list-${postId}`);
-  allLists.forEach(l => {
-    l.innerHTML = (commentStore[postId] || []).map(c => buildCommentHTML(c)).join('');
-  });
+    // 2. Add to Firestore
+    await addDoc(collection(db, 'posts', postId, 'comments'), {
+      text,
+      authorUid: user.uid,
+      authorName: profile.displayName || user.displayName || 'Anonymous',
+      authorHandle: profile.username || user.email?.split('@')[0] || 'user',
+      authorAvatar: profile.photoURL || user.photoURL || '',
+      likes: 0,
+      createdAt: serverTimestamp(),
+    });
 
-  const countEl = document.querySelector('.comment-count-' + postId);
-  if (countEl) countEl.textContent = formatNum(commentStore[postId].length);
-  const label = document.getElementById('comment-count-label-' + postId);
-  if (label) label.textContent = `${commentStore[postId].length} comment${commentStore[postId].length>1?'s':''}`;
+    // 3. Update the comment count on the post
+    await updateDoc(doc(db, 'posts', postId), {
+      comments: increment(1)
+    });
 
-  if (window.FB) {
-    try {
-      const { db, collection, addDoc, doc, updateDoc, increment, serverTimestamp } = window.FB;
-      await addDoc(collection(db,'posts',postId,'comments'), {
-        text, authorUid: user.uid,
-        authorName:   newComment.authorName,
-        authorHandle: newComment.authorHandle,
-        authorAvatar: newComment.authorAvatar,
-        likes: 0, createdAt: serverTimestamp(),
-      });
-      await updateDoc(doc(db,'posts',postId), { comments: increment(1) });
-    } catch(e) {}
+    // Note: The UI will update automatically via the onSnapshot listener 
+    // already defined in your loadComments() function.
+  } catch(e) {
+    console.error("Comment failed:", e);
+    toast('Failed to post reply', 'error');
   }
 }
 
