@@ -123,7 +123,12 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-en); m
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-.app-shell { display: flex; min-height: 100dvh; }
+.app-shell { 
+  display: flex; 
+  min-height: 100dvh; 
+  max-width: 100vw; /* Add this */
+  overflow-x: hidden; /* Add this */
+}
 
 /* ── SIDEBAR ── */
 .sidebar {
@@ -162,7 +167,13 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-en); m
 .theme-track.on::after { transform: translateX(15px); }
 
 /* ── LAYOUT ── */
-.main-content { flex: 1; margin-left: var(--sidebar-w); min-height: 100dvh; max-width: 720px; }
+.main-content { 
+  flex: 1; 
+  margin-left: var(--sidebar-w); 
+  min-height: 100dvh; 
+  max-width: 720px; 
+  width: 100%; /* Add this to ensure it fills but doesn't exceed space */
+}
 .right-panel { width: 300px; flex-shrink: 0; padding: 20px 16px; position: sticky; top: 0; height: 100dvh; overflow-y: auto; }
 .page { display: none; min-height: 100dvh; }
 .page.active { display: block; }
@@ -362,7 +373,16 @@ html.light .modal-overlay { background: rgba(0,0,0,0.4); }
 .search-clear { width: 22px; height: 22px; border-radius: 50%; background: var(--text3); border: none; color: var(--bg); font-size: 14px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; flex-shrink: 0; transition: background var(--transition); }
 .search-clear.show { display: flex; }
 .search-clear:hover { background: var(--text2); }
-.search-filters { display: flex; gap: 6px; padding: 10px 16px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.search-filters { 
+  display: flex; 
+  gap: 6px; 
+  padding: 10px 16px; 
+  border-bottom: 1px solid var(--border); 
+  overflow-x: auto; /* This is good */
+  -webkit-overflow-scrolling: touch; /* Add this for smooth mobile scrolling */
+  width: 100%; /* Ensure it stays within parent */
+  white-space: nowrap; /* Keep chips in one line if scrolling is intended */
+}
 .search-filters::-webkit-scrollbar { display: none; }
 .filter-chip { padding: 6px 14px; border-radius: 50px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: var(--font-en); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all var(--transition); flex-shrink: 0; }
 .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
@@ -481,6 +501,24 @@ html.light .search-highlight { background: rgba(0,158,118,0.15); }
   .comment-input,
   .search-input {
     font-size: 16px !important;
+  }
+  .main-content { 
+    margin-left: 0; 
+    margin-top: 52px; 
+    width: 100vw; /* Ensure it matches viewport exactly */
+    overflow-x: hidden; 
+  }
+
+  .search-bar-wrap { 
+    width: 100%; 
+    box-sizing: border-box; 
+  }
+
+  /* Prevent long words or URLs from breaking layout */
+  .post-body, .post-title, .comment-text {
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 }
 @media (max-width: 500px) {
