@@ -419,8 +419,28 @@ html.light .search-highlight { background: rgba(0,158,118,0.15); }
 .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 16px; cursor: pointer; color: var(--text3); font-size: 10px; font-weight: 600; transition: color var(--transition); border: none; background: transparent; font-family: var(--font-en); }
 .mobile-nav-item.active { color: var(--accent); }
 .mobile-nav-item svg { width: 22px; height: 22px; }
-.mobile-fab { display: none; position: fixed; bottom: 72px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); border: none; color: #000; font-size: 24px; font-weight: 700; cursor: pointer; z-index: 200; box-shadow: 0 4px 20px var(--accent-glow); transition: all var(--transition); align-items: center; justify-content: center; }
-.mobile-fab:hover { background: var(--accent2); transform: scale(1.05); }
+/* Update this block in your CSS */
+.mobile-fab { 
+  display: none; 
+  position: fixed; 
+  /* Increase this from 72px to about 90px or 100px */
+  bottom: 90px; 
+  right: 20px; 
+  width: 52px; 
+  height: 52px; 
+  border-radius: 50%; 
+  background: var(--accent); 
+  border: none; 
+  color: #000; 
+  font-size: 24px; 
+  font-weight: 700; 
+  cursor: pointer; 
+  z-index: 210; /* Increased z-index to ensure it is above EVERYTHING */
+  box-shadow: 0 4px 20px var(--accent-glow); 
+  transition: all var(--transition); 
+  align-items: center; 
+  justify-content: center; 
+}.mobile-fab:hover { background: var(--accent2); transform: scale(1.05); }
 .mobile-topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: var(--mobile-nav-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); z-index: 150; align-items: center; justify-content: space-between; padding: 0 16px; }
 .mobile-logo { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 .mobile-logo-mark { width: 28px; height: 28px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; color: #000; flex-shrink: 0; }
@@ -450,6 +470,10 @@ html.light .search-highlight { background: rgba(0,158,118,0.15); }
   .search-bar-wrap { top: 0; padding: 10px 12px; }
   .search-filters { padding: 8px 12px; gap: 5px; }
   .filter-chip { padding: 5px 11px; font-size: 11px; }
+  .main-content {
+    /* This ensures you can scroll past the last post so it's not hidden by the nav */
+    padding-bottom: 100px; 
+  }
 }
 @media (max-width: 500px) {
   .post-card { padding: 12px 14px; }
@@ -943,12 +967,7 @@ const COMMUNITIES = [
 ];
 
 const SAMPLE_POSTS = [
-  { id:'sample1', authorName:'Ahmad Al-Rashid', authorHandle:'ahmad_rashid', authorAvatar:'', community:'at_home', communityName:'🇸🇾 Syrians at Home', title:"Damascus is rebuilding — here's what we've seen", body:'After December 8, the streets of Damascus have seen a wave of hope and reconstruction. Markets are reopening, old neighborhoods are coming back to life, and people are returning from displacement.', tags:['Damascus','Reconstruction','Hope'], likes:847, comments:134, shares:89, createdAt:new Date(Date.now()-2*3600000), trending:true },
-  { id:'sample2', authorName:'Lina Khalil', authorHandle:'lina_k', authorAvatar:'', community:'uk', communityName:'🇬🇧 Syrians in the UK', title:'UK Home Office Syrian visa update — what you need to know', body:"There have been significant changes to the Syrian family reunion visa process. Here's a breakdown of the new requirements and timelines for those applying from the UK.", tags:['Visa','UK','Family Reunion'], likes:612, comments:78, shares:203, createdAt:new Date(Date.now()-5*3600000), trending:true },
-  { id:'sample3', authorName:'Omar Tlass', authorHandle:'o_tlass', authorAvatar:'', community:'germany', communityName:'🇩🇪 Syrians in Germany', title:'Hilfe beim Aufenthaltstitel — Community Resources in Berlin', body:"We've compiled a full list of legal aid organizations, Arabic-speaking lawyers, and community centers in Berlin, Hamburg, and Munich to help with residence permit renewals.", tags:['Germany','Legal','Berlin','Resources'], likes:391, comments:56, shares:145, createdAt:new Date(Date.now()-10*3600000), trending:false },
-  { id:'sample4', authorName:'Rima Nassar', authorHandle:'rima_n', authorAvatar:'', community:'general', communityName:'🌍 General / Diaspora', title:'A letter to the next generation of Syrians', body:"To every Syrian child growing up abroad — you carry something precious. Your language, your history, your cuisine, your music. Don't let it disappear.", tags:['Identity','Culture','Diaspora','Heritage'], likes:1204, comments:267, shares:432, createdAt:new Date(Date.now()-24*3600000), trending:true },
-  { id:'sample5', authorName:'Karim Barakat', authorHandle:'k_barakat', authorAvatar:'', community:'usa', communityName:'🇺🇸 Syrians in the USA', title:'Syrian-American business network — Q1 2025 meetup', body:"Join us in New York for our quarterly meetup connecting Syrian entrepreneurs and professionals across the US. This quarter's focus: tech startups and investment opportunities.", tags:['Business','Networking','USA','NYC'], likes:189, comments:42, shares:67, createdAt:new Date(Date.now()-36*3600000), trending:false },
-];
+ ];
 
 /* ══════════════════════════════════════════════════════════
    STATE
