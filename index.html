@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>December 8 Forum</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-dove"></i> <span class="desktop-only">December 8</span>
+            </div>
+            <a href="#" class="nav-item active" data-target="view-feed">
+                <i class="fa-solid fa-house"></i> <span class="desktop-only">Home</span>
+            </a>
+            <a href="#" class="nav-item" data-target="view-communities">
+                <i class="fa-solid fa-users"></i> <span class="desktop-only">Communities</span>
+            </a>
+            <a href="#" class="nav-item" data-target="view-post">
+                <i class="fa-regular fa-square-plus"></i> <span class="desktop-only">Post</span>
+            </a>
+            <a href="#" class="nav-item" data-target="view-profile">
+                <i class="fa-regular fa-user"></i> <span class="desktop-only">Profile</span>
+            </a>
+        </nav>
+
+        <main class="main-content">
+            
+            <section id="view-feed" class="view active">
+                <div class="sticky-header">
+                    <h2>Home</h2>
+                    <div class="feed-tabs">
+                        <div class="tab active" onclick="switchTab('latest')">Latest</div>
+                        <div class="tab" onclick="switchTab('trending')">Trending</div>
+                    </div>
+                </div>
+                
+                <div id="feed-container">
+                    <article class="post-card">
+                        <img src="https://ui-avatars.com/api/?name=Ahmad&background=random" class="avatar" alt="Avatar">
+                        <div class="post-content">
+                            <div class="post-header">
+                                <span class="name">Ahmad</span> <span class="username">@ahmad_sy</span> · 2h
+                                <span class="community-tag">Syrians in Germany</span>
+                            </div>
+                            <h3 class="post-title">Resources for new arrivals in Berlin</h3>
+                            <p class="post-desc">I've compiled a list of resources, language exchange groups, and local meetups happening this month. Check the links below!</p>
+                            <div class="post-tags">
+                                <span>#Berlin</span> <span>#Resources</span>
+                            </div>
+                            <div class="post-actions">
+                                <span><i class="fa-regular fa-comment"></i> 12</span>
+                                <span><i class="fa-solid fa-retweet"></i> 5</span>
+                                <span><i class="fa-regular fa-heart"></i> 48</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="view-communities" class="view">
+                <div class="sticky-header">
+                    <h2>Communities</h2>
+                </div>
+                <div class="communities-list">
+                    <div class="community-card">
+                        <div class="community-info">
+                            <h3>Syrians at Home</h3>
+                            <p>Connecting people inside Syria. News, local updates, and support.</p>
+                        </div>
+                        <button class="btn-follow">Join</button>
+                    </div>
+                    <div class="community-card">
+                        <div class="community-info">
+                            <h3>Syrians in the UK</h3>
+                            <p>Discussions, visa advice, and community events across the UK.</p>
+                        </div>
+                        <button class="btn-follow">Join</button>
+                    </div>
+                    <div class="community-card">
+                        <div class="community-info">
+                            <h3>Syrians in Germany</h3>
+                            <p>Integration tips, job opportunities, and networking in DACH.</p>
+                        </div>
+                        <button class="btn-follow">Join</button>
+                    </div>
+                    <div class="community-card">
+                        <div class="community-info">
+                            <h3>Syrians in Turkey</h3>
+                            <p>Community hub for Syrians residing in Turkey.</p>
+                        </div>
+                        <button class="btn-follow">Join</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-post" class="view">
+                <div class="sticky-header">
+                    <h2>Create a Post</h2>
+                </div>
+                <form id="create-post-form" class="post-form">
+                    <select id="post-community" required>
+                        <option value="" disabled selected>Select Community...</option>
+                        <option value="home">Syrians at Home</option>
+                        <option value="uk">Syrians in the UK</option>
+                        <option value="germany">Syrians in Germany</option>
+                        <option value="turkey">Syrians in Turkey</option>
+                        <option value="global">Global Diaspora</option>
+                    </select>
+                    <input type="text" id="post-title" placeholder="Post Title" required>
+                    <textarea id="post-desc" placeholder="What's happening?" rows="5" required></textarea>
+                    <input type="text" id="post-tags" placeholder="Tags (e.g. #news #tech)">
+                    <input type="url" id="post-links" placeholder="Add a Link (optional)">
+                    
+                    <div class="form-footer">
+                        <label for="post-image" class="file-upload-btn">
+                            <i class="fa-regular fa-image"></i> Add Image
+                        </label>
+                        <input type="file" id="post-image" accept="image/*" style="display: none;">
+                        <button type="submit" class="btn-primary">Post</button>
+                    </div>
+                    <div id="image-preview" class="image-preview"></div>
+                </form>
+            </section>
+
+            <section id="view-profile" class="view">
+                <div class="sticky-header">
+                    <h2>Profile</h2>
+                </div>
+                
+                <div id="auth-section" class="auth-container">
+                    <h3>Join the Conversation</h3>
+                    <p>Sign up to connect with Syrians around the world.</p>
+                    <button id="btn-google-signin" class="btn-outline">
+                        <i class="fa-brands fa-google"></i> Continue with Google
+                    </button>
+                    <div class="divider"><span>or</span></div>
+                    <form id="email-auth-form">
+                        <input type="email" id="auth-email" placeholder="Email" required>
+                        <input type="password" id="auth-password" placeholder="Password" required>
+                        <button type="submit" class="btn-primary">Sign In / Sign Up</button>
+                    </form>
+                </div>
+
+                <div id="profile-section" class="profile-container" style="display: none;">
+                    <div class="profile-header">
+                        <div class="profile-cover"></div>
+                        <div class="profile-avatar-row">
+                            <img src="https://ui-avatars.com/api/?name=User" id="profile-avatar" alt="Profile">
+                            <button class="btn-outline" id="btn-edit-profile">Edit Profile</button>
+                        </div>
+                        <h3 id="profile-name">User Name</h3>
+                        <p class="profile-username" id="profile-username">@username</p>
+                        <p class="profile-location"><i class="fa-solid fa-location-dot"></i> <span id="profile-loc-text">Damascus, Syria</span></p>
+                    </div>
+                    <div class="profile-feed">
+                        <h4>Your Posts</h4>
+                        <p class="empty-state">You haven't posted anything yet.</p>
+                    </div>
+                    <button id="btn-logout" class="btn-danger" style="margin: 20px; width: calc(100% - 40px);">Log Out</button>
+                </div>
+            </section>
+
+        </main>
+        
+        <aside class="right-sidebar desktop-only">
+            <div class="search-bar">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" placeholder="Search December 8">
+            </div>
+            <div class="trends-box">
+                <h3>Trends for you</h3>
+                <div class="trend-item">
+                    <span>Trending in UK</span>
+                    <strong>#LondonMeetup</strong>
+                    <span>1,234 posts</span>
+                </div>
+                <div class="trend-item">
+                    <span>News</span>
+                    <strong>Reconstruction</strong>
+                    <span>5,432 posts</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+<style>
+:root {
+    /* X-inspired colors with a slight custom feel */
+    --primary: #1d9bf0;
+    --primary-hover: #1a8cd8;
+    --bg-color: #ffffff;
+    --text-main: #0f1419;
+    --text-muted: #536471;
+    --border-color: #eff3f4;
+    --bg-hover: #f7f9f9;
+    --danger: #f4212e;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+/* App Layout */
+.app-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    max-width: 600px;
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    padding-bottom: 60px; /* Space for mobile nav */
+}
+
+/* Navigation */
+.sidebar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.logo {
+    display: none;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-main);
+    padding: 15px;
+}
+
+.nav-item {
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 24px;
+    padding: 10px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: var(--bg-hover);
+    color: var(--primary);
+}
+
+.desktop-only {
+    display: none;
+}
+
+/* Views & Headers */
+.view {
+    display: none;
+}
+.view.active {
+    display: block;
+    animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    z-index: 10;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Feed Tabs */
+.feed-tabs {
+    display: flex;
+    margin-top: 10px;
+}
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-weight: 500;
+    position: relative;
+}
+.tab.active {
+    color: var(--text-main);
+    font-weight: bold;
+}
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background-color: var(--primary);
+    border-radius: 4px;
+}
+
+/* Post Cards */
+.post-card {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.post-card:hover {
+    background-color: var(--bg-hover);
+}
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+.post-content {
+    flex: 1;
+    min-width: 0;
+}
+.post-header {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+.name {
+    font-weight: bold;
+    color: var(--text-main);
+}
+.community-tag {
+    display: inline-block;
+    background: var(--bg-hover);
+    color: var(--primary);
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 5px;
+}
+.post-title {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+.post-desc {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+.post-tags span {
+    color: var(--primary);
+    margin-right: 5px;
+    font-size: 14px;
+}
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    max-width: 400px;
+    color: var(--text-muted);
+    margin-top: 15px;
+}
+
+/* Forms & Buttons */
+.post-form, .auth-container {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: inherit;
+}
+textarea {
+    resize: none;
+}
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+.btn-primary, .btn-outline, .btn-follow, .btn-danger {
+    padding: 10px 20px;
+    border-radius: 9999px; /* Pill shape */
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+.btn-primary:hover { background-color: var(--primary-hover); }
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+.btn-outline:hover { background-color: var(--bg-hover); }
+.btn-danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+/* Community Cards */
+.community-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+.community-info h3 { margin-bottom: 5px; }
+.community-info p { color: var(--text-muted); font-size: 14px; }
+.btn-follow { background: var(--text-main); color: white; }
+
+/* Profile Layout */
+.profile-cover { height: 150px; background-color: var(--border-color); }
+.profile-avatar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 15px;
+    margin-top: -40px;
+}
+#profile-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    border: 4px solid var(--bg-color);
+}
+.profile-header h3, .profile-header p { padding: 0 15px; }
+.profile-username, .profile-location { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+.profile-feed { border-top: 1px solid var(--border-color); margin-top: 20px; }
+.profile-feed h4 { padding: 15px; border-bottom: 1px solid var(--border-color); }
+.empty-state { text-align: center; color: var(--text-muted); padding: 30px; }
+
+/* Desktop Media Queries */
+@media (min-width: 768px) {
+    .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        width: 275px;
+        flex-direction: column;
+        justify-content: flex-start;
+        border-top: none;
+        border-right: 1px solid var(--border-color);
+        padding: 20px;
+    }
+    .logo, .desktop-only { display: inline; }
+    .nav-item {
+        border-radius: 9999px; /* Pill hover effect like X */
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        width: fit-content;
+    }
+    .main-content { padding-bottom: 0; }
+    
+    /* Right Sidebar for Desktop */
+    .right-sidebar {
+        width: 350px;
+        padding: 20px;
+        display: block;
+    }
+    .search-bar {
+        background: var(--bg-hover);
+        border-radius: 9999px;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .search-bar input { border: none; background: transparent; padding: 0; }
+    .search-bar input:focus { border: none; }
+    .trends-box {
+        background: var(--bg-hover);
+        border-radius: 16px;
+        margin-top: 20px;
+        padding: 15px;
+    }
+    .trend-item {
+        display: flex;
+        flex-direction: column;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+    .trend-item span { color: var(--text-muted); font-size: 13px; }
+    .trend-item strong { color: var(--text-main); }
+}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // --- 1. SPA Navigation Logic ---
+    const navItems = document.querySelectorAll('.nav-item');
+    const views = document.querySelectorAll('.view');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = item.getAttribute('data-target');
+            
+            // Update UI Active States
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            
+            views.forEach(view => view.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+
+    // Feed Tabs Logic (Latest vs Trending)
+    window.switchTab = function(tabName) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        // TODO: Query Firebase Firestore here based on tabName
+        // if tabName === 'latest' -> order by timestamp desc
+        // if tabName === 'trending' -> order by likes/comments desc
+        console.log("Loading feed: ", tabName);
+    };
+
+    // --- 2. Post Creation Logic ---
+    const postForm = document.getElementById('create-post-form');
+    const imageInput = document.getElementById('post-image');
+    
+    // Handle Image Preview
+    let selectedImageFile = null;
+    imageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            selectedImageFile = this.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('image-preview').innerHTML = `<img src="${e.target.result}" style="max-width: 100%; border-radius: 16px; margin-top: 10px;">`;
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    postForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const postData = {
+            community: document.getElementById('post-community').value,
+            title: document.getElementById('post-title').value,
+            description: document.getElementById('post-desc').value,
+            tags: document.getElementById('post-tags').value,
+            link: document.getElementById('post-links').value,
+            createdAt: new Date() // Will be replaced by serverTimestamp() in Firebase
+        };
+
+        console.log("Ready to push to Firebase:", postData);
+        
+        // TODO: FIREBASE INTEGRATION
+        // 1. If selectedImageFile exists, upload to Firebase Storage -> get Download URL
+        // 2. Add downloadURL to postData
+        // 3. await addDoc(collection(db, "posts"), postData);
+        // 4. Alert success, reset form, navigate back to feed
+
+        alert("Post logic ready for Firebase! Check console.");
+        postForm.reset();
+        document.getElementById('image-preview').innerHTML = '';
+        selectedImageFile = null;
+    });
+
+    // --- 3. Firebase Authentication Logic Placeholders ---
+    
+    const authSection = document.getElementById('auth-section');
+    const profileSection = document.getElementById('profile-section');
+    
+    // UI function to toggle Logged In / Logged Out state
+    function updateAuthStateUI(user) {
+        if (user) {
+            authSection.style.display = 'none';
+            profileSection.style.display = 'block';
+            
+            // Populate profile data
+            document.getElementById('profile-name').innerText = user.displayName || "User";
+            document.getElementById('profile-username').innerText = user.username || "@" + user.email.split('@')[0];
+            if(user.photoURL) {
+                document.getElementById('profile-avatar').src = user.photoURL;
+            }
+        } else {
+            authSection.style.display = 'flex';
+            profileSection.style.display = 'none';
+        }
+    }
+
+    // Google Sign-In
+    document.getElementById('btn-google-signin').addEventListener('click', async () => {
+        // TODO: FIREBASE INTEGRATION
+        // const provider = new GoogleAuthProvider();
+        // try {
+        //    const result = await signInWithPopup(auth, provider);
+        //    updateAuthStateUI(result.user);
+        // } catch (error) { console.error(error); }
+        
+        console.log("Trigger Google Auth");
+        // Mocking a successful login for UI testing
+        updateAuthStateUI({ email: "test@google.com", displayName: "Ahmad" }); 
+    });
+
+    // Email/Password Sign-In or Register
+    document.getElementById('email-auth-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('auth-email').value;
+        const password = document.getElementById('auth-password').value;
+        
+        // TODO: FIREBASE INTEGRATION
+        // Try signInWithEmailAndPassword(auth, email, password)
+        // Catch error (user not found) -> try createUserWithEmailAndPassword(auth, email, password)
+        // updateAuthStateUI(user);
+        
+        console.log("Trigger Email Auth for:", email);
+        updateAuthStateUI({ email: email, displayName: "New User" });
+    });
+
+    // Logout
+    document.getElementById('btn-logout').addEventListener('click', () => {
+        // TODO: FIREBASE INTEGRATION
+        // await signOut(auth);
+        
+        console.log("Logged out");
+        updateAuthStateUI(null);
+    });
+
+    // TODO: FIREBASE OBSERVER
+    // onAuthStateChanged(auth, (user) => {
+    //    updateAuthStateUI(user);
+    // });
+});
+</script>
