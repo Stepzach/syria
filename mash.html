@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Startup Clothing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .page-view { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .page-view.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased flex flex-col min-h-screen">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center sm:hidden">
+                    <button class="text-gray-500 hover:text-gray-900">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigateTo('home')">
+                    <img class="text-2xl font-bold tracking-widest text-black" src="https://github.com/Stepzach/syria/blob/main/IMG_2658.png?raw=true" width=50px>
+                </div>
+                <div class="hidden sm:flex space-x-8">
+                    <button onclick="navigateTo('home')" class="text-gray-500 hover:text-black px-3 py-2 text-sm font-medium transition-colors">Home</button>
+                    <button onclick="navigateTo('shop')" class="text-gray-500 hover:text-black px-3 py-2 text-sm font-medium transition-colors">Shop</button>
+                    <button class="text-gray-500 hover:text-black px-3 py-2 text-sm font-medium transition-colors">About</button>
+                </div>
+                <div class="flex items-center">
+                    <button class="text-gray-500 hover:text-black relative">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <span class="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        
+        <div id="home" class="page-view active">
+            <div class="relative bg-gray-900 h-[70vh] flex items-center justify-center">
+                <img class="absolute inset-0 w-full h-full object-cover opacity-60" src="https://github.com/Stepzach/syria/blob/main/IMG_2643.jpeg?raw=true" alt="Fashion Model">
+                <div class="relative z-10 text-center px-4">
+                    <h2 class="text-4xl sm:text-6xl font-bold text-white tracking-tight mb-4">The Fall Collection</h2>
+                    <p class="text-lg text-gray-200 mb-8 max-w-xl mx-auto">Minimalist design, sustainable fabrics, built for the modern uniform.</p>
+                    <button onclick="navigateTo('shop')" class="bg-white text-black px-8 py-3 text-sm font-semibold uppercase tracking-wider hover:bg-gray-200 transition-colors">
+                        Shop Now
+                    </button>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <h3 class="text-2xl font-semibold mb-8 text-center">Trending Now</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="group cursor-pointer">
+                        <div class="w-full h-96 bg-gray-200 overflow-hidden mb-4">
+                            <img src="https://github.com/Stepzach/syria/blob/main/9EA9DA76-8B06-4C13-8EDB-2E8538A76E84.jpeg?raw=true" alt="Heavyweight Hoodie" class="w-full h-full object-center object-cover group-hover:scale-105 transition-transform duration-500" style="transform: scale(1.05);">
+                        </div>
+                        <h4 class="text-sm font-medium text-gray-900">Logo Black Tee</h4>
+                        <p class="text-sm text-gray-500">25.00</p>
+                    </div>
+                    <div class="group cursor-pointer">
+                        <div class="w-full h-96 bg-gray-200 overflow-hidden mb-4">
+                            <img src="https://github.com/Stepzach/syria/blob/main/A2841BB1-B4FE-4620-B1D6-6599D5AB818B.jpeg?raw=true" alt="Graphic Tee" class="w-full h-full object-center object-cover group-hover:scale-105 transition-transform duration-500" style="transform: scale(1.05);">
+                        </div>
+                        <h4 class="text-sm font-medium text-gray-900">Logo White Tee</h4>
+                        <p class="text-sm text-gray-500">25.00</p>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+
+        <div id="shop" class="page-view py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold mb-8">All Products</h2>
+                
+                <div class="flex space-x-4 mb-8 border-b border-gray-200 pb-4">
+                    <button class="text-sm font-medium text-black">All</button>
+                    <button class="text-sm font-medium text-gray-500 hover:text-black">Tops</button>
+                    <button class="text-sm font-medium text-gray-500 hover:text-black">Bottoms</button>
+                    <button class="text-sm font-medium text-gray-500 hover:text-black">Accessories</button>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="group cursor-pointer">
+                        <div class="w-full h-72 bg-gray-200 overflow-hidden mb-4 relative">
+                            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black bg-opacity-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button class="bg-white text-black px-4 py-2 text-xs uppercase tracking-wide font-bold">Quick Add</button>
+                            </div>
+                        </div>
+                        <h4 class="text-sm font-medium">Essential Hoodie</h4>
+                        <p class="text-sm text-gray-500">$85.00</p>
+                    </div>
+                     <div class="group cursor-pointer">
+                        <div class="w-full h-72 bg-gray-200 overflow-hidden mb-4 relative">
+                            <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black bg-opacity-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button class="bg-white text-black px-4 py-2 text-xs uppercase tracking-wide font-bold">Quick Add</button>
+                            </div>
+                        </div>
+                        <h4 class="text-sm font-medium">Box Tee - White</h4>
+                        <p class="text-sm text-gray-500">$40.00</p>
+                    </div>
+                    </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+                <div>
+                    <h1 class="text-xl font-bold tracking-widest mb-4">MASH.</h1>
+                    <p class="text-gray-500">Redefining modern streetwear.</p>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-4">Customer Care</h5>
+                    <ul class="space-y-2 text-gray-500">
+                        <li><a href="#" class="hover:text-black">Shipping & Returns</a></li>
+                        <li><a href="#" class="hover:text-black">Size Guide</a></li>
+                        <li><a href="#" class="hover:text-black">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-4">Newsletter</h5>
+                    <p class="text-gray-500 mb-4">Subscribe for early access to new drops.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Email address" class="border border-gray-300 px-3 py-2 w-full focus:outline-none focus:border-black">
+                        <button class="bg-black text-white px-4 py-2 hover:bg-gray-800 transition-colors">→</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-gray-200 text-center text-gray-400 text-xs">
+                &copy; 2026 Mash Clothing. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function navigateTo(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-view').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Show requested page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
